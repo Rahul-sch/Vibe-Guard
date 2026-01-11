@@ -40,7 +40,7 @@ export function installGitHubWorkflow(projectPath: string, options: InstallOptio
       console.log(`   1. Commit and push: git add .github/workflows/vibeguard.yml && git commit -m "chore: add VibeGuard workflow" && git push`);
       console.log(`   2. Open a test PR to see VibeGuard in action`);
       if (options.autoFix) {
-        console.log(`   3. React with 👍 to the VibeGuard comment to auto-fix issues`);
+        console.log(`   3. Comment \`/vibeguard fix\` to auto-fix issues`);
       }
     }
   } catch {

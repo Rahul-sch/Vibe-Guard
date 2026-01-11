@@ -21,7 +21,7 @@ export function formatPRComment(result: ScanResult): string {
   // Auto-fixable callout
   if (fixable.length > 0) {
     sections.push(`### ✅ Auto-fixable: ${fixable.length} issues`);
-    sections.push('React with 👍 to this comment to automatically apply fixes.\n');
+    sections.push('Comment `/vibeguard fix` to apply fixes.\n');
   }
 
   // Critical issues (expanded)
@@ -75,7 +75,7 @@ export function formatInlineComment(finding: Finding): string {
   }
 
   if (isFixable(finding)) {
-    lines.push('\n✅ *This issue can be auto-fixed. React with 👍 to the PR comment to apply.*');
+    lines.push('\n✅ *This issue can be auto-fixed. Comment `/vibeguard fix` to apply.*');
   }
 
   return lines.join('\n');

@@ -64,7 +64,7 @@ describe('comment-formatter', () => {
       const comment = formatPRComment(result);
 
       expect(comment).toContain('Auto-fixable');
-      expect(comment).toContain('React with 👍');
+      expect(comment).toContain('Comment `/vibeguard fix`');
     });
 
     it('handles no findings gracefully', () => {

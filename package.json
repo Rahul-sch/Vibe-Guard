@@ -1,12 +1,12 @@
 {
-  "name": "vibeguard",
+  "name": "@rahul-sch/vibeguard",
   "version": "1.0.0",
   "description": "Regex-first security scanner for AI-generated code",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "vibeguard": "./bin/vibeguard.js"
+    "vibeguard": "bin/vibeguard.js"
   },
   "files": [
     "dist",
@@ -21,7 +21,13 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
-  "keywords": ["security", "scanner", "cli", "vibe-coding", "static-analysis"],
+  "keywords": [
+    "security",
+    "scanner",
+    "cli",
+    "vibe-coding",
+    "static-analysis"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
@@ -32,9 +38,9 @@
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
-    "eslint": "^8.57.0",
     "@typescript-eslint/eslint-plugin": "^7.13.0",
     "@typescript-eslint/parser": "^7.13.0",
+    "eslint": "^8.57.0",
     "prettier": "^3.3.2",
     "tsx": "^4.15.6",
     "typescript": "^5.4.5",

@@ -61,4 +61,26 @@ describe('workflow-generator', () => {
 
     expect(workflow).toContain('--severity info');
   });
+
+  it('triggers auto-fix on /fix comment, not emoji', () => {
+    const workflow = generateWorkflowYAML({
+      autoFix: true,
+      severityThreshold: 'warning',
+      aiVerify: false,
+    });
+
+    expect(workflow).toContain("contains(github.event.comment.body, '/fix')");
+    expect(workflow).not.toContain('👍');
+  });
+
+  it('instructs users to comment /vibeguard fix', () => {
+    const workflow = generateWorkflowYAML({
+      autoFix: true,
+      severityThreshold: 'warning',
+      aiVerify: false,
+    });
+
+    expect(workflow).toContain('Comment \\`/vibeguard fix\\` to apply fixes');
+    expect(workflow).not.toContain('React with');
+  });
 });

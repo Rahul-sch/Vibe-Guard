@@ -6,7 +6,7 @@ export function generateWorkflowYAML(options: InstallOptions): string {
     if: |
       github.event_name == 'issue_comment' &&
       github.event.issue.pull_request &&
-      contains(github.event.comment.body, '👍')
+      contains(github.event.comment.body, '/fix')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -90,7 +90,7 @@ jobs:
 
 \${fixable > 0 ? \`### ✅ Auto-fixable: \${fixable} issues
 
-React with 👍 to this comment to automatically apply fixes.
+Comment \\\`/vibeguard fix\\\` to apply fixes.
 \` : ''}
 <details>
 <summary>View all findings</summary>
