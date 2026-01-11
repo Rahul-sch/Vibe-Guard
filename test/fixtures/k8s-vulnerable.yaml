@@ -1,0 +1,37 @@
+# VG-K8S-001: cluster-admin binding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: myapp
+    namespace: default
+---
+# VG-K8S-002: open ingress 0.0.0.0/0
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-all
+spec:
+  podSelector: {}
+  ingress:
+    - from:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+---
+# VG-K8S-003: missing runAsNonRoot
+apiVersion: v1
+kind: Pod
+metadata:
+  name: vulnerable-pod
+spec:
+  securityContext:
+    fsGroup: 1000
+  containers:
+    - name: app
+      image: myapp:latest
