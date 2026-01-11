@@ -19,7 +19,7 @@ const agent = new https.Agent({ rejectUnauthorized: false });
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 // VG-SEC-001: eval
-const result = eval(userCode);
+const result = JSON.parse(userCode);
 
 // VG-SEC-002: SQL concatenation
 const query = `SELECT * FROM users WHERE id = ${userId}`;

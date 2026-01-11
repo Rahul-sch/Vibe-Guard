@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import { VERSION, NAME } from '../index.js';
 import { scanCommand } from './commands/scan.js';
 import { fixCommand } from './commands/fix.js';
+import { githubCommand } from './commands/github.js';
 import {
   severityOption,
   formatOption,
@@ -56,5 +57,15 @@ program
   .addOption(verboseOption)
   .addOption(configOption)
   .action(fixCommand);
+
+program
+  .command('github')
+  .description('GitHub integration commands')
+  .argument('<action>', 'install')
+  .argument('[path]', 'project directory', '.')
+  .option('--no-auto-fix', 'disable automatic fixes on approval')
+  .option('--severity <level>', 'minimum severity to report', 'warning')
+  .option('--ai-verify', 'enable AI verification')
+  .action(githubCommand);
 
 program.parse();

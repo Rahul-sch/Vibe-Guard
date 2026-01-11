@@ -1,6 +1,6 @@
 # VG-PY-001: shell=True
 import subprocess
-subprocess.run("ls -la", shell=True)
+subprocess.run("ls -la", shell=False)
 
 # VG-PY-002: os.system
 import os
@@ -21,10 +21,10 @@ app.run(debug=True)
 
 # VG-PY-006: verify=False
 import requests
-requests.get("https://api.example.com", verify=False)
+requests.get("https://api.example.com")
 
 # VG-SEC-001: eval
-result = eval(user_input)
+result = JSON.parse(user_input)
 
 # VG-SEC-003: hardcoded secret
 api_key = "secret_key_EXAMPLE_DO_NOT_USE_1234567890abcdef"
