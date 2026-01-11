@@ -11,6 +11,11 @@ import {
   applyFixes,
 } from '../../fix/index.js';
 import type { Fix, FixResult } from '../../fix/types.js';
+import type { Finding } from '../../rules/types.js';
+import { createProvider } from '../../ai/provider.js';
+import { createAIFixStrategy } from '../../fix/strategies/ai.js';
+import { verifyAIFixes } from '../../fix/ai-verifier.js';
+import { readFileSync } from 'fs';
 
 export interface FixCommandOptions extends CLIOptions {
   dryRun?: boolean;
@@ -54,24 +59,83 @@ export async function fixCommand(
 
   // Filter to fixable findings
   const fixable = getFixableFindings(result.findings);
+  const notFixableByRegex = result.findings.filter(f => !isFixable(f));
 
-  if (fixable.length === 0) {
+  // Initialize AI if enabled
+  let aiStrategy: ReturnType<typeof createAIFixStrategy> | null = null;
+  if (config.aiVerify && config.aiApiKey) {
+    const provider = createProvider({
+      provider: config.aiProvider || 'openai',
+      apiKey: config.aiApiKey,
+    });
+    aiStrategy = createAIFixStrategy(provider);
+    console.log(`AI fix mode enabled (provider: ${config.aiProvider || 'openai'})\n`);
+  } else if (config.aiVerify && !config.aiApiKey) {
+    console.error('Error: --ai requires AI API key (VIBEGUARD_AI_KEY or --ai-key)');
+    process.exitCode = 1;
+    return;
+  }
+
+  if (fixable.length === 0 && !aiStrategy) {
     console.log(`Found ${result.findings.length} issues, but none are auto-fixable.`);
     return;
   }
 
-  console.log(`Found ${result.findings.length} issues, ${fixable.length} are auto-fixable:\n`);
+  console.log(`Found ${result.findings.length} issues, ${fixable.length} are auto-fixable via regex:\n`);
 
-  // Generate fixes
+  // Generate regex-based fixes
   const fixResults: { finding: typeof fixable[0]; result: FixResult }[] = [];
   const validFixes: Fix[] = [];
 
   for (const finding of fixable) {
-    const fixResult = generateFix(finding, resolvedPath);
+    const fixResult = await generateFix(finding, resolvedPath);
     fixResults.push({ finding, result: fixResult });
 
     if (fixResult.success && fixResult.fix) {
       validFixes.push(fixResult.fix);
+    }
+  }
+
+  // Try AI fixes for non-regex-fixable findings
+  const aiFixes: Array<{ fix: Fix; finding: Finding }> = [];
+  if (aiStrategy && notFixableByRegex.length > 0) {
+    console.log(`\nAttempting AI fixes for ${notFixableByRegex.length} remaining issues...\n`);
+
+    for (const finding of notFixableByRegex) {
+      const filePath = resolve(resolvedPath, finding.file);
+      let content: string;
+      try {
+        content = readFileSync(filePath, 'utf-8');
+      } catch {
+        continue;
+      }
+
+      if (!aiStrategy.canFix(finding, content)) {
+        continue;
+      }
+
+      const fixResult = await aiStrategy.generateFix(finding, content);
+      const status = fixResult.success ? '\x1b[32m✓\x1b[0m' : '\x1b[31m✗\x1b[0m';
+      console.log(`  ${status} ${finding.ruleId} ${finding.file}:${finding.line}`);
+
+      if (fixResult.success && fixResult.fix) {
+        aiFixes.push({ fix: fixResult.fix, finding });
+      } else if (fixResult.error) {
+        console.log(`      \x1b[33m${fixResult.error}\x1b[0m`);
+      }
+    }
+
+    // Verify AI fixes
+    if (aiFixes.length > 0) {
+      console.log(`\nVerifying ${aiFixes.length} AI-generated fixes...`);
+      const verifiedFixes = await verifyAIFixes(aiFixes, resolvedPath);
+
+      const rejected = aiFixes.length - verifiedFixes.length;
+      if (rejected > 0) {
+        console.log(`\x1b[33m⚠ Rejected ${rejected} AI fixes that failed verification\x1b[0m`);
+      }
+
+      validFixes.push(...verifiedFixes);
     }
   }
 

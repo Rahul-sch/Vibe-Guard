@@ -31,7 +31,7 @@ export function getFixableFindings(findings: Finding[]): Finding[] {
 /**
  * Generate a fix for a single finding
  */
-export function generateFix(finding: Finding, basePath?: string): FixResult {
+export async function generateFix(finding: Finding, basePath?: string): Promise<FixResult> {
   const rule = getRuleForFinding(finding);
 
   if (!rule?.fixable || !rule?.fixStrategy) {
@@ -63,8 +63,8 @@ export function generateFix(finding: Finding, basePath?: string): FixResult {
     return { success: false, fix: null, error: 'Strategy cannot fix this specific case' };
   }
 
-  // Generate the fix
-  const result = strategy.generateFix(finding, content);
+  // Generate the fix (handle both sync and async strategies)
+  const result = await Promise.resolve(strategy.generateFix(finding, content));
 
   // Update file path in fix to be absolute
   if (result.success && result.fix) {
@@ -77,14 +77,14 @@ export function generateFix(finding: Finding, basePath?: string): FixResult {
 /**
  * Generate fixes for multiple findings
  */
-export function generateFixes(
+export async function generateFixes(
   findings: Finding[],
   basePath?: string
-): { finding: Finding; result: FixResult }[] {
+): Promise<{ finding: Finding; result: FixResult }[]> {
   const results: { finding: Finding; result: FixResult }[] = [];
 
   for (const finding of findings) {
-    const result = generateFix(finding, basePath);
+    const result = await generateFix(finding, basePath);
     results.push({ finding, result });
   }
 

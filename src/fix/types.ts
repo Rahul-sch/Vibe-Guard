@@ -28,7 +28,7 @@ export interface FixResult {
 export interface FixStrategy {
   name: string;
   canFix(finding: Finding, content: string): boolean;
-  generateFix(finding: Finding, content: string): FixResult;
+  generateFix(finding: Finding, content: string): FixResult | Promise<FixResult>;
 }
 
 /**

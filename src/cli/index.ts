@@ -56,6 +56,9 @@ program
   .addOption(gitOption)
   .addOption(verboseOption)
   .addOption(configOption)
+  .addOption(aiOption)
+  .addOption(aiKeyOption)
+  .addOption(aiProviderOption)
   .action(fixCommand);
 
 program

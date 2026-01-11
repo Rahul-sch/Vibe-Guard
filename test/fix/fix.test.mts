@@ -310,7 +310,7 @@ describe('fix engine', () => {
   });
 
   describe('generateFix', () => {
-    it('generates fix for VG-SEC-001 (eval)', () => {
+    it('generates fix for VG-SEC-001 (eval)', async () => {
       const testFile = join(TEST_DIR, 'eval-fix.js');
       writeFileSync(testFile, 'const data = eval(userInput);');
 
@@ -328,7 +328,7 @@ describe('fix engine', () => {
         confidence: 'high',
       };
 
-      const result = generateFix(finding, TEST_DIR);
+      const result = await generateFix(finding, TEST_DIR);
       expect(result.success).toBe(true);
       expect(result.fix).toBeDefined();
       expect(result.fix!.replacement).toBe('JSON.parse(userInput)');
@@ -435,7 +435,7 @@ describe('integration: fix reduces findings', () => {
 
     // Get fix
     const finding = evalFindings[0];
-    const fixResult = generateFix(finding, TEST_DIR);
+    const fixResult = await generateFix(finding, TEST_DIR);
     expect(fixResult.success).toBe(true);
 
     // Apply fix
@@ -459,7 +459,7 @@ describe('integration: fix reduces findings', () => {
 
     // Get fix
     const finding = shellFindings[0];
-    const fixResult = generateFix(finding, TEST_DIR);
+    const fixResult = await generateFix(finding, TEST_DIR);
     expect(fixResult.success).toBe(true);
 
     // Apply fix
@@ -483,7 +483,7 @@ describe('integration: fix reduces findings', () => {
 
     // Get fix
     const finding = verifyFindings[0];
-    const fixResult = generateFix(finding, TEST_DIR);
+    const fixResult = await generateFix(finding, TEST_DIR);
     expect(fixResult.success).toBe(true);
 
     // Apply fix

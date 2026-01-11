@@ -1,5 +1,6 @@
-import type { AIProvider, AIConfig, VerifyRequest, VerifyResponse } from './types.js';
+import type { AIProvider, AIConfig, VerifyRequest, VerifyResponse, FixRequest, FixResponse } from './types.js';
 import { buildVerificationPrompt, parseVerificationResponse } from './prompts.js';
+import { buildFixPrompt, parseFixResponse } from './prompts-fix.js';
 
 export class OpenAICompatibleProvider implements AIProvider {
   name: string;
@@ -52,7 +53,31 @@ export class OpenAICompatibleProvider implements AIProvider {
     }
   }
 
-  private async callOpenAI(prompt: string): Promise<string> {
+  async generateFix(request: FixRequest): Promise<FixResponse> {
+    const prompt = buildFixPrompt(request);
+
+    try {
+      let responseText: string;
+
+      if (this.name === 'anthropic') {
+        responseText = await this.callAnthropic(prompt, 1000);
+      } else {
+        responseText = await this.callOpenAI(prompt, 1000);
+      }
+
+      return parseFixResponse(responseText);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      return {
+        success: false,
+        fixedCode: '',
+        explanation: `AI fix generation failed: ${message}`,
+        confidence: 0,
+      };
+    }
+  }
+
+  private async callOpenAI(prompt: string, maxTokens: number = 500): Promise<string> {
     const response = await fetch(this.baseUrl, {
       method: 'POST',
       headers: {
@@ -62,7 +87,7 @@ export class OpenAICompatibleProvider implements AIProvider {
       body: JSON.stringify({
         model: this.model,
         messages: [{ role: 'user', content: prompt }],
-        max_tokens: 500,
+        max_tokens: maxTokens,
         temperature: 0.1,
       }),
     });
@@ -78,7 +103,7 @@ export class OpenAICompatibleProvider implements AIProvider {
     return data.choices[0]?.message?.content || '';
   }
 
-  private async callAnthropic(prompt: string): Promise<string> {
+  private async callAnthropic(prompt: string, maxTokens: number = 500): Promise<string> {
     const response = await fetch(this.baseUrl, {
       method: 'POST',
       headers: {
@@ -88,7 +113,7 @@ export class OpenAICompatibleProvider implements AIProvider {
       },
       body: JSON.stringify({
         model: this.model,
-        max_tokens: 500,
+        max_tokens: maxTokens,
         messages: [{ role: 'user', content: prompt }],
       }),
     });
