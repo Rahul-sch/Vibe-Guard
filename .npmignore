@@ -1,0 +1,10 @@
+src/
+test/
+*.ts
+!dist/**/*.d.ts
+.eslintrc.cjs
+.prettierrc
+tsconfig.json
+vitest.config.ts
+coverage/
+.github/
