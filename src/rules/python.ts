@@ -14,6 +14,8 @@ export const pythonRules: DetectionRule[] = [
     confidence: 'high',
     cwe: 'CWE-78',
     owasp: 'A03:2021',
+    fixable: true,
+    fixStrategy: 'shell-true-to-false',
   },
   {
     id: 'VG-PY-002',
@@ -85,5 +87,7 @@ export const pythonRules: DetectionRule[] = [
     confidence: 'high',
     cwe: 'CWE-295',
     owasp: 'A02:2021',
+    fixable: true,
+    fixStrategy: 'remove-verify-false',
   },
 ];

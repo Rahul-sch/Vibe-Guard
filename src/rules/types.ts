@@ -39,6 +39,9 @@ export interface DetectionRule {
     enabled: boolean;
     promptTemplate?: string;
   };
+  // Auto-fix support
+  fixable?: boolean;
+  fixStrategy?: string;
 }
 
 export interface Finding {
@@ -53,6 +56,7 @@ export interface Finding {
   endColumn?: number;
   snippet: string;
   match: string;
+  matchOffset?: number; // Character offset in file for precise patching
   message: string;
   remediation?: string;
   cwe?: string;

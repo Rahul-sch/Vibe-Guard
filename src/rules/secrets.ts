@@ -15,6 +15,8 @@ export const secretsRules: DetectionRule[] = [
     cwe: 'CWE-95',
     owasp: 'A03:2021',
     aiVerification: { enabled: true },
+    fixable: true,
+    fixStrategy: 'eval-to-json-parse',
   },
   {
     id: 'VG-SEC-002',
@@ -46,6 +48,8 @@ export const secretsRules: DetectionRule[] = [
     cwe: 'CWE-798',
     owasp: 'A07:2021',
     aiVerification: { enabled: true },
+    fixable: true,
+    fixStrategy: 'hardcoded-to-env',
   },
   {
     id: 'VG-SEC-004',

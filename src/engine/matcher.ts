@@ -67,6 +67,7 @@ export function createFinding(
     column: matchResult.column,
     snippet: matchResult.snippet,
     match: matchResult.match,
+    matchOffset: matchResult.index,
     message: rule.message,
     remediation: rule.remediation,
     cwe: rule.cwe,

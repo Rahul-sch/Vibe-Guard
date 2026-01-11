@@ -73,3 +73,19 @@ export const configOption = new Option(
   '-c, --config <path>',
   'path to config file'
 );
+
+// Fix command options
+export const dryRunOption = new Option(
+  '--dry-run',
+  'show diffs without applying changes'
+);
+
+export const yesOption = new Option(
+  '-y, --yes',
+  'apply fixes without prompting for confirmation'
+);
+
+export const gitOption = new Option(
+  '--git',
+  'stage fixed files with git add'
+);
