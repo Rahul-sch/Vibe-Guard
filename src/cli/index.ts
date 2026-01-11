@@ -11,6 +11,9 @@ import {
   noColorOption,
   verboseOption,
   configOption,
+  aiOption,
+  aiKeyOption,
+  aiProviderOption,
 } from './options.js';
 
 const program = new Command();
@@ -33,6 +36,9 @@ program
   .addOption(noColorOption)
   .addOption(verboseOption)
   .addOption(configOption)
+  .addOption(aiOption)
+  .addOption(aiKeyOption)
+  .addOption(aiProviderOption)
   .action(scanCommand);
 
 program.parse();

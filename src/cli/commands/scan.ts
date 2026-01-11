@@ -2,6 +2,8 @@ import { resolve } from 'node:path';
 import { scan } from '../../engine/index.js';
 import { resolveConfig, type CLIOptions } from '../../config/index.js';
 import { createReporter } from '../../reporters/index.js';
+import { verifyFindings, detectProvider } from '../../ai/index.js';
+import { ruleById } from '../../rules/index.js';
 
 export interface ScanCommandOptions extends CLIOptions {
   color?: boolean;
@@ -26,9 +28,35 @@ export async function scanCommand(
     console.error(`Max file size: ${config.maxFileSize}`);
     console.error(`Severities: ${config.includeSeverities.join(', ')}`);
     console.error(`Format: ${config.format}`);
+    console.error(`AI verification: ${config.aiVerify ? 'enabled' : 'disabled'}`);
   }
 
-  const result = await scan(config);
+  let result = await scan(config);
+
+  // AI verification if enabled and API key available
+  if (config.aiVerify && config.aiApiKey) {
+    if (config.verbose) {
+      console.error(`Running AI verification with ${config.aiProvider || 'auto-detected'} provider...`);
+    }
+
+    const provider = config.aiProvider || detectProvider(config.aiApiKey);
+    const verifiedFindings = await verifyFindings(
+      result.findings,
+      ruleById,
+      {
+        provider,
+        apiKey: config.aiApiKey,
+      },
+      config.verbose
+    );
+
+    result = {
+      ...result,
+      findings: verifiedFindings,
+    };
+  } else if (config.aiVerify && !config.aiApiKey) {
+    console.error('Warning: --ai flag set but no API key found. Set VIBEGUARD_AI_KEY or use --ai-key.');
+  }
 
   const reporter = createReporter(config.format, config.noColor);
   const output = reporter.report(result);
