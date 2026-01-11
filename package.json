@@ -4,10 +4,16 @@
   "description": "Regex-first security scanner for AI-generated code",
   "type": "module",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "bin": {
     "vibeguard": "./bin/vibeguard.js"
   },
+  "files": [
+    "dist",
+    "bin"
+  ],
   "scripts": {
+    "prepublishOnly": "npm run build",
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "lint": "eslint src --ext .ts",

@@ -1,0 +1,61 @@
+# Example GitHub Action workflow for VibeGuard
+# Copy this file to .github/workflows/security.yml in your project
+
+name: Security Scan
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  vibeguard:
+    name: VibeGuard Security Scan
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install VibeGuard
+        run: npm install -g vibeguard
+
+      - name: Run security scan
+        run: vibeguard --sarif > results.sarif
+        continue-on-error: true
+
+      - name: Upload SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
+
+  # Optional: Fail PR on critical issues
+  vibeguard-gate:
+    name: Security Gate
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install VibeGuard
+        run: npm install -g vibeguard
+
+      - name: Check for critical issues
+        run: vibeguard --severity critical
