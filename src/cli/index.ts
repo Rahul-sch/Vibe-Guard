@@ -1,8 +1,9 @@
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 import { VERSION, NAME } from '../index.js';
 import { scanCommand } from './commands/scan.js';
 import { fixCommand } from './commands/fix.js';
 import { githubCommand } from './commands/github.js';
+import { explainRule, explainAllRules } from './explain.js';
 import {
   severityOption,
   formatOption,
@@ -28,6 +29,21 @@ program
   .version(VERSION)
   .description('Regex-first security scanner for AI-generated code');
 
+// --why flag for explaining rules
+program
+  .option('--why [rule-id]', 'explain a specific rule or list all rules')
+  .hook('preAction', (thisCommand) => {
+    const opts = thisCommand.opts();
+    if (opts.why !== undefined) {
+      if (typeof opts.why === 'string') {
+        console.log(explainRule(opts.why));
+      } else {
+        console.log(explainAllRules());
+      }
+      process.exit(0);
+    }
+  });
+
 program
   .command('scan', { isDefault: true })
   .description('Scan a directory for security issues')
@@ -44,6 +60,9 @@ program
   .addOption(aiOption)
   .addOption(aiKeyOption)
   .addOption(aiProviderOption)
+  .option('--table', 'output results as formatted table')
+  .option('--interactive', 'interactive mode: step through findings')
+  .option('--benchmark', 'show scan performance metrics')
   .action(scanCommand);
 
 program

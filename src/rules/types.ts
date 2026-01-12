@@ -6,6 +6,9 @@ export type RuleCategory =
   | 'deserialization'
   | 'config'
   | 'crypto'
+  | 'web'
+  | 'cloud'
+  | 'general'
   | 'docker'
   | 'kubernetes'
   | 'dependency';

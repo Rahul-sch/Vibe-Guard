@@ -1,20 +1,30 @@
 import type { DetectionRule } from './types.js';
 import { secretsRules } from './secrets.js';
+import { secretsExtendedRules } from './secrets-extended.js';
 import { pythonRules } from './python.js';
 import { nodeRules } from './node.js';
 import { dockerRules } from './docker.js';
 import { kubernetesRules } from './kubernetes.js';
 import { configRules } from './config.js';
 import { dependencyRules } from './dependencies.js';
+import { cryptoRules } from './crypto.js';
+import { webRules } from './web.js';
+import { cloudRules } from './cloud.js';
+import { generalRules } from './general.js';
 
 export const allRules: DetectionRule[] = [
   ...secretsRules,
+  ...secretsExtendedRules,
   ...pythonRules,
   ...nodeRules,
   ...dockerRules,
   ...kubernetesRules,
   ...configRules,
   ...dependencyRules,
+  ...cryptoRules,
+  ...webRules,
+  ...cloudRules,
+  ...generalRules,
 ];
 
 export const ruleById = new Map<string, DetectionRule>(
