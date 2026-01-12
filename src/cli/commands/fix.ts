@@ -16,6 +16,8 @@ import { createProvider } from '../../ai/provider.js';
 import { createAIFixStrategy } from '../../fix/strategies/ai.js';
 import { verifyAIFixes } from '../../fix/ai-verifier.js';
 import { readFileSync } from 'fs';
+import { phases, sleep } from '../spinner.js';
+import { formatMultipleDiffs } from '../../fix/diff-formatter.js';
 
 export interface FixCommandOptions extends CLIOptions {
   dryRun?: boolean;
@@ -45,17 +47,18 @@ export async function fixCommand(
 
   const config = resolveConfig(resolvedPath, options);
 
-  if (config.verbose) {
-    console.error(`VibeGuard fix: ${config.targetPath}`);
-  }
+  // Phase 1: Scan for issues
+  const scanSpinner = phases.scan();
+  scanSpinner.start();
 
-  // First, scan to find issues
   const result = await scan(config);
 
   if (result.findings.length === 0) {
-    console.log('No issues found.');
+    scanSpinner.succeed('No issues found');
     return;
   }
+
+  scanSpinner.succeed(`Found ${result.findings.length} security issues`);
 
   // Filter to fixable findings
   const fixable = getFixableFindings(result.findings);
@@ -81,9 +84,12 @@ export async function fixCommand(
     return;
   }
 
-  console.log(`Found ${result.findings.length} issues, ${fixable.length} are auto-fixable via regex:\n`);
+  console.log(`${fixable.length} issues are auto-fixable via regex:\n`);
 
-  // Generate regex-based fixes
+  // Phase 2: Generate fixes
+  const fixSpinner = phases.fix();
+  fixSpinner.start();
+
   const fixResults: { finding: typeof fixable[0]; result: FixResult }[] = [];
   const validFixes: Fix[] = [];
 
@@ -96,10 +102,14 @@ export async function fixCommand(
     }
   }
 
+  fixSpinner.succeed(`Generated ${validFixes.length} regex fixes`);
+
   // Try AI fixes for non-regex-fixable findings
   const aiFixes: Array<{ fix: Fix; finding: Finding }> = [];
   if (aiStrategy && notFixableByRegex.length > 0) {
-    console.log(`\nAttempting AI fixes for ${notFixableByRegex.length} remaining issues...\n`);
+    const aiFixSpinner = phases.fix();
+    aiFixSpinner.text = `Generating AI fixes for ${notFixableByRegex.length} issues...`;
+    aiFixSpinner.start();
 
     for (const finding of notFixableByRegex) {
       const filePath = resolve(resolvedPath, finding.file);
@@ -115,24 +125,26 @@ export async function fixCommand(
       }
 
       const fixResult = await aiStrategy.generateFix(finding, content);
-      const status = fixResult.success ? '\x1b[32m✓\x1b[0m' : '\x1b[31m✗\x1b[0m';
-      console.log(`  ${status} ${finding.ruleId} ${finding.file}:${finding.line}`);
 
       if (fixResult.success && fixResult.fix) {
         aiFixes.push({ fix: fixResult.fix, finding });
-      } else if (fixResult.error) {
-        console.log(`      \x1b[33m${fixResult.error}\x1b[0m`);
       }
     }
 
+    aiFixSpinner.succeed(`Generated ${aiFixes.length} AI fixes`);
+
     // Verify AI fixes
     if (aiFixes.length > 0) {
-      console.log(`\nVerifying ${aiFixes.length} AI-generated fixes...`);
+      const verifySpinner = phases.verify();
+      verifySpinner.start();
+
       const verifiedFixes = await verifyAIFixes(aiFixes, resolvedPath);
 
       const rejected = aiFixes.length - verifiedFixes.length;
       if (rejected > 0) {
-        console.log(`\x1b[33m⚠ Rejected ${rejected} AI fixes that failed verification\x1b[0m`);
+        verifySpinner.warn(`Verified ${verifiedFixes.length} AI fixes (${rejected} rejected)`);
+      } else {
+        verifySpinner.succeed(`Verified ${verifiedFixes.length} AI fixes`);
       }
 
       validFixes.push(...verifiedFixes);
@@ -140,6 +152,7 @@ export async function fixCommand(
   }
 
   // Show what we found
+  console.log('\nFix summary:');
   for (const { finding, result: fixResult } of fixResults) {
     const status = fixResult.success ? '\x1b[32m✓\x1b[0m' : '\x1b[31m✗\x1b[0m';
     console.log(`  ${status} ${finding.ruleId} ${finding.file}:${finding.line}`);
@@ -158,20 +171,16 @@ export async function fixCommand(
 
   // Dry run mode - just show diffs
   if (options.dryRun) {
-    console.log('\n--dry-run: Showing diffs only:\n');
-    for (const fix of validFixes) {
-      console.log(printDiff(fix));
-    }
+    console.log('\n--dry-run: Showing changes (no files will be modified):\n');
+    console.log(formatMultipleDiffs(validFixes));
     console.log('\nNo changes were made (dry-run mode).');
     return;
   }
 
   // If not --yes, prompt for confirmation
   if (!options.yes) {
-    console.log('\nDiffs:');
-    for (const fix of validFixes) {
-      console.log(printDiff(fix));
-    }
+    console.log('\nProposed changes:');
+    console.log(formatMultipleDiffs(validFixes));
 
     const confirmed = await promptConfirm('\nApply these fixes?');
     if (!confirmed) {
@@ -221,15 +230,18 @@ export async function fixCommand(
     }
   }
 
-  // Show verification
-  console.log('\nRe-scanning to verify fixes...');
+  // Phase: Re-scan to verify
+  const rescanSpinner = phases.scan();
+  rescanSpinner.text = 'Re-scanning to verify fixes...';
+  rescanSpinner.start();
+
   const verifyResult = await scan(config);
   const remainingFixable = getFixableFindings(verifyResult.findings);
 
   if (remainingFixable.length === 0) {
-    console.log('\x1b[32m✓ All fixable issues have been resolved!\x1b[0m');
+    rescanSpinner.succeed('All fixable issues have been resolved!');
   } else {
-    console.log(`\x1b[33m${remainingFixable.length} fixable issues remain.\x1b[0m`);
+    rescanSpinner.warn(`${remainingFixable.length} fixable issues remain`);
   }
 
   // Exit code based on remaining issues

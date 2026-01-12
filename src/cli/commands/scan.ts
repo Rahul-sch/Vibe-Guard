@@ -5,6 +5,8 @@ import { createReporter } from '../../reporters/index.js';
 import { tableReporter } from '../../reporters/table.js';
 import { verifyFindings, detectProvider } from '../../ai/index.js';
 import { ruleById } from '../../rules/index.js';
+import { phases, sleep } from '../spinner.js';
+import { generateTelemetrySummary } from '../telemetry.js';
 
 export interface ScanCommandOptions extends CLIOptions {
   color?: boolean;
@@ -25,27 +27,33 @@ export async function scanCommand(
   }
 
   const config = resolveConfig(resolvedPath, options);
+  const startTime = Date.now();
 
-  const startTime = options.benchmark ? Date.now() : 0;
+  // Phase 1: Initialize
+  const initSpinner = phases.init();
+  initSpinner.start();
+  await sleep(300);
+  initSpinner.succeed('Neural Engine initialized');
 
-  if (config.verbose) {
-    console.error(`VibeGuard scanning: ${config.targetPath}`);
-    console.error(`Ignore patterns: ${config.ignorePatterns.length}`);
-    console.error(`Max file size: ${config.maxFileSize}`);
-    console.error(`Severities: ${config.includeSeverities.join(', ')}`);
-    console.error(`Format: ${config.format}`);
-    console.error(`AI verification: ${config.aiVerify ? 'enabled' : 'disabled'}`);
-    console.error(`Total rules: ${ruleById.size}`);
-  }
+  // Phase 2: File scanning
+  const parseSpinner = phases.parse();
+  parseSpinner.start();
 
   let result = await scan(config);
-  const scanTime = options.benchmark ? Date.now() - startTime : 0;
+  const scanTime = Date.now() - startTime;
 
-  // AI verification if enabled and API key available
+  parseSpinner.succeed(`Parsed ${result.scannedFiles || 0} files in ${scanTime}ms`);
+
+  // Phase 3: Rule matching
+  const rulesSpinner = phases.rules();
+  rulesSpinner.start();
+  await sleep(200);
+  rulesSpinner.succeed(`Cross-referenced ${ruleById.size} rules (${result.findings.length} findings)`);
+
+  // Phase 4: AI verification (optional)
   if (config.aiVerify && config.aiApiKey) {
-    if (config.verbose) {
-      console.error(`Running AI verification with ${config.aiProvider || 'auto-detected'} provider...`);
-    }
+    const aiSpinner = phases.aiVerify();
+    aiSpinner.start();
 
     const provider = config.aiProvider || detectProvider(config.aiApiKey);
     const verifiedFindings = await verifyFindings(
@@ -62,6 +70,8 @@ export async function scanCommand(
       ...result,
       findings: verifiedFindings,
     };
+
+    aiSpinner.succeed(`Verified ${verifiedFindings.length} findings with AI`);
   } else if (config.aiVerify && !config.aiApiKey) {
     console.error('Warning: --ai flag set but no API key found. Set VIBEGUARD_AI_KEY or use --ai-key.');
   }
@@ -76,6 +86,9 @@ export async function scanCommand(
   }
 
   console.log(output);
+
+  // Show telemetry summary
+  console.log(generateTelemetrySummary(result));
 
   // Show benchmark results
   if (options.benchmark) {

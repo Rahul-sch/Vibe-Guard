@@ -1,6 +1,8 @@
 import chalk from 'chalk';
+import boxen from 'boxen';
 import type { ScanResult, Finding } from '../rules/types.js';
 import type { Reporter } from './types.js';
+import { generateExploitPayload, hasExploitPayload } from '../security/exploit-simulator.js';
 
 export class ConsoleReporter implements Reporter {
   private noColor: boolean;
@@ -29,6 +31,16 @@ export class ConsoleReporter implements Reporter {
 
       for (const finding of sorted) {
         lines.push(this.formatFinding(finding));
+
+        // Add exploit simulation box for critical findings
+        if (hasExploitPayload(finding) && !this.noColor) {
+          const exploit = generateExploitPayload(finding);
+          if (exploit) {
+            lines.push('');
+            lines.push(this.formatExploitBox(exploit));
+          }
+        }
+
         lines.push('');
       }
     }
@@ -65,6 +77,28 @@ export class ConsoleReporter implements Reporter {
     }
 
     return lines.join('\n');
+  }
+
+  private formatExploitBox(exploit: { vector: string; payload: string; impact: string }): string {
+    const content = [
+      chalk.bold.red('ATTACK VECTOR:'),
+      chalk.white(exploit.vector),
+      '',
+      chalk.bold.yellow('EXAMPLE PAYLOAD:'),
+      chalk.gray(exploit.payload),
+      '',
+      chalk.bold.magenta('POTENTIAL IMPACT:'),
+      chalk.white(exploit.impact),
+    ].join('\n');
+
+    return boxen(content, {
+      title: '💀 EXPLOIT VECTOR',
+      titleAlignment: 'center',
+      padding: 1,
+      margin: { left: 2 },
+      borderStyle: 'double',
+      borderColor: 'red',
+    });
   }
 
   private style(
