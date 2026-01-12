@@ -1,14 +1,26 @@
 import type { InstallOptions } from './types.js';
 
 export function generateWorkflowYAML(options: InstallOptions): string {
+  const aiVerifyFlag = options.aiVerify ? ' --ai' : '';
+
   const autoFixJob = options.autoFix ? `
   auto-fix:
-    if: |
+    if: >
       github.event_name == 'issue_comment' &&
       github.event.issue.pull_request &&
-      contains(github.event.comment.body, '/fix')
+      (contains(github.event.comment.body, '/vibeguard fix') || contains(github.event.comment.body, '/fix'))
     runs-on: ubuntu-latest
     steps:
+      - name: Add eyes reaction
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.reactions.createForIssueComment({
+              ...context.repo,
+              comment_id: context.payload.comment.id,
+              content: 'eyes'
+            });
+
       - uses: actions/checkout@v4
         with:
           ref: refs/pull/\${{ github.event.issue.number }}/head
@@ -22,7 +34,7 @@ export function generateWorkflowYAML(options: InstallOptions): string {
         run: npm install -g vibeguard
 
       - name: Apply fixes
-        run: vibeguard fix --yes
+        run: vibeguard fix --yes${aiVerifyFlag}
 
       - name: Commit fixes
         run: |
@@ -30,9 +42,18 @@ export function generateWorkflowYAML(options: InstallOptions): string {
           git config user.email "bot@vibeguard.dev"
           git add -A
           git commit -m "fix(security): apply VibeGuard auto-fixes" || echo "No changes"
-          git push` : '';
+          git push
 
-  const aiVerifyFlag = options.aiVerify ? ' --ai' : '';
+      - name: Add success reaction
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.reactions.createForIssueComment({
+              ...context.repo,
+              comment_id: context.payload.comment.id,
+              content: '+1'
+            });` : '';
 
   return `name: VibeGuard Security Scan
 

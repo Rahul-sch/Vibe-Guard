@@ -1,6 +1,6 @@
 {
   "name": "@rahul-sch/vibeguard",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Regex-first security scanner for AI-generated code",
   "type": "module",
   "main": "dist/index.js",
