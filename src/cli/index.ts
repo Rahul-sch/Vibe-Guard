@@ -1,4 +1,5 @@
 import { Command, Option } from 'commander';
+import chalk from 'chalk';
 import { VERSION, NAME } from '../index.js';
 import { scanCommand } from './commands/scan.js';
 import { fixCommand } from './commands/fix.js';
@@ -21,6 +22,24 @@ import {
   yesOption,
   gitOption,
 } from './options.js';
+
+// Global error handlers - prevent raw stack traces
+process.on('uncaughtException', (error) => {
+  console.error(chalk.red(`\nError: ${error.message}`));
+  if (process.env.DEBUG) {
+    console.error(chalk.gray(error.stack || ''));
+  }
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason) => {
+  const message = reason instanceof Error ? reason.message : String(reason);
+  console.error(chalk.red(`\nError: ${message}`));
+  if (process.env.DEBUG && reason instanceof Error) {
+    console.error(chalk.gray(reason.stack || ''));
+  }
+  process.exit(1);
+});
 
 const program = new Command();
 
