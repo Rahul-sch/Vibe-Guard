@@ -222,7 +222,12 @@ export async function fixCommand(
   if (options.git && modifiedFiles.length > 0) {
     try {
       for (const file of modifiedFiles) {
-        execSync(`git add "${file}"`, { stdio: 'pipe' });
+        // Security: Use spawn with argument array to prevent command injection
+        const { spawnSync } = require('child_process');
+        const result = spawnSync('git', ['add', file], { stdio: 'pipe', encoding: 'utf-8' });
+        if (result.error) {
+          throw result.error;
+        }
       }
       console.log('\nChanges staged for commit.');
     } catch (error) {

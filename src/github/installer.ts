@@ -28,11 +28,17 @@ export function installGitHubWorkflow(projectPath: string, options: InstallOptio
 
   // Try to detect repo
   try {
-    const remoteUrl = execSync('git config --get remote.origin.url', {
+    // Security: Use spawnSync with argument array to prevent command injection
+    const { spawnSync } = require('child_process');
+    const result = spawnSync('git', ['config', '--get', 'remote.origin.url'], {
       cwd: projectPath,
       encoding: 'utf-8',
       stdio: ['pipe', 'pipe', 'pipe']
-    }).trim();
+    });
+    if (result.error) {
+      throw result.error;
+    }
+    const remoteUrl = result.stdout.trim();
 
     const repoMatch = remoteUrl.match(/github\.com[:/]([^/]+\/[^/.]+)/);
     if (repoMatch) {

@@ -38,8 +38,11 @@ export async function walkFiles(options: WalkerOptions): Promise<FileEntry[]> {
 
   const allIgnore = [...DEFAULT_IGNORE, ...ignorePatterns];
 
+  // Security: Resolve targetPath to prevent path traversal
+  const resolvedTargetPath = path.resolve(targetPath);
+
   const entries = await fg(['**/*'], {
-    cwd: targetPath,
+    cwd: resolvedTargetPath,
     ignore: allIgnore,
     onlyFiles: true,
     dot: false,
@@ -55,8 +58,17 @@ export async function walkFiles(options: WalkerOptions): Promise<FileEntry[]> {
       continue;
     }
 
+    // Security: Validate resolved path stays within target directory
+    const fullPath = path.join(resolvedTargetPath, entry.path);
+    const resolvedPath = path.resolve(fullPath);
+
+    if (!resolvedPath.startsWith(resolvedTargetPath)) {
+      console.error(`Security: Skipping file outside target directory: ${entry.path}`);
+      continue;
+    }
+
     files.push({
-      path: path.join(targetPath, entry.path),
+      path: fullPath,
       relativePath: entry.path,
       size: stats.size,
     });

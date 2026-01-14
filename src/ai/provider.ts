@@ -100,7 +100,17 @@ export class OpenAICompatibleProvider implements AIProvider {
     const data = (await response.json()) as {
       choices: Array<{ message: { content: string } }>;
     };
-    return data.choices[0]?.message?.content || '';
+
+    // Security: Validate response structure before accessing
+    if (!data.choices || !Array.isArray(data.choices) || data.choices.length === 0) {
+      throw new Error('Invalid API response: missing choices array');
+    }
+
+    if (!data.choices[0]?.message?.content) {
+      throw new Error('Invalid API response: missing message content');
+    }
+
+    return data.choices[0].message.content;
   }
 
   private async callAnthropic(prompt: string, maxTokens: number = 500): Promise<string> {
@@ -126,7 +136,17 @@ export class OpenAICompatibleProvider implements AIProvider {
     const data = (await response.json()) as {
       content: Array<{ text: string }>;
     };
-    return data.content[0]?.text || '';
+
+    // Security: Validate response structure before accessing
+    if (!data.content || !Array.isArray(data.content) || data.content.length === 0) {
+      throw new Error('Invalid API response: missing content array');
+    }
+
+    if (!data.content[0]?.text) {
+      throw new Error('Invalid API response: missing text content');
+    }
+
+    return data.content[0].text;
   }
 }
 
