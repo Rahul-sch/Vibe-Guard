@@ -1,4 +1,4 @@
-import { diffLines, Change } from 'diff';
+import { diffLines } from 'diff';
 import chalk from 'chalk';
 import type { Fix } from './types.js';
 

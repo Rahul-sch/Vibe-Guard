@@ -12,8 +12,12 @@ export const webRules: DetectionRule[] = [
     category: 'web',
     severity: 'critical',
     languages: ['node', 'typescript'],
-    filePatterns: ['**/*.js', '**/*.ts'],
-    pattern: /Access-Control-Allow-Origin['"]?\s*[:=]\s*['"][*]['"]/gi,
+    filePatterns: ['**/*.js', '**/*.ts', '**/*.mjs', '**/*.cjs'],
+    // Matches:
+    //   Access-Control-Allow-Origin: '*'  (raw header)
+    //   cors({ origin: '*' })             (express cors middleware)
+    //   res.header('Access-Control-Allow-Origin', '*')
+    pattern: /(?:Access-Control-Allow-Origin['"]?\s*[:,]\s*['"][*]['"]|origin\s*:\s*['"][*]['"])/gi,
     confidence: 'high',
     message: 'CORS allows all origins (*), exposing sensitive data',
     remediation: 'Whitelist specific origins or use credentials: false',
@@ -102,6 +106,22 @@ export const webRules: DetectionRule[] = [
     message: 'Express app missing security headers middleware',
     remediation: 'Use helmet() middleware for security headers',
     cwe: 'CWE-1021',
+    fixable: false,
+  },
+  {
+    id: 'VG-WEB-008',
+    title: 'Reflected XSS via res.send',
+    category: 'web',
+    severity: 'critical',
+    languages: ['node', 'typescript'],
+    filePatterns: ['**/*.js', '**/*.ts', '**/*.mjs', '**/*.cjs'],
+    // res.send / res.write / res.end with untrusted request data
+    pattern: /res\.(?:send|write|end)\s*\([^)]*(?:req\.(?:body|query|params|headers)|request\.(?:GET|POST))/g,
+    confidence: 'high',
+    message: 'Reflecting raw request data back in the response causes XSS',
+    remediation: 'Escape with a templating engine, or send JSON via res.json() with a strict Content-Type',
+    cwe: 'CWE-79',
+    owasp: 'A03:2021',
     fixable: false,
   },
 ];

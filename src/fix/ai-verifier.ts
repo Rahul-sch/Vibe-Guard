@@ -10,7 +10,7 @@ import { scan } from '../engine/index.js';
 export async function verifyAIFix(
   fix: Fix,
   originalFinding: Finding,
-  basePath: string
+  _basePath: string
 ): Promise<boolean> {
   // Read original file content
   const originalContent = readFileSync(fix.file, 'utf-8');

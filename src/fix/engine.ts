@@ -3,7 +3,7 @@ import { join, isAbsolute } from 'path';
 import type { Finding, DetectionRule } from '../rules/types.js';
 import type { Fix, FixResult, FixOptions, ApplyResult } from './types.js';
 import { getStrategy } from './strategies.js';
-import { applyFixes, generateUnifiedDiff, dryRunFixes } from './patch.js';
+import { applyFixes, generateUnifiedDiff } from './patch.js';
 import { allRules, ruleById } from '../rules/index.js';
 
 /**

@@ -55,6 +55,7 @@ function drawBottomLine(widths: number[]): string {
 
 function pad(str: string, width: number): string {
   // Remove ANSI codes for length calculation
+  // eslint-disable-next-line no-control-regex
   const cleanStr = str.replace(/\u001b\[[0-9;]*m/g, '');
   const padding = ' '.repeat(Math.max(0, width - cleanStr.length));
   return str + padding;

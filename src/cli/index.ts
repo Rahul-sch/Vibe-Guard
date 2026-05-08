@@ -1,4 +1,4 @@
-import { Command, Option } from 'commander';
+import { Command } from 'commander';
 import chalk from 'chalk';
 import { VERSION, NAME } from '../index.js';
 import { scanCommand } from './commands/scan.js';
@@ -80,7 +80,7 @@ program
   .addOption(aiKeyOption)
   .addOption(aiProviderOption)
   .option('--table', 'output results as formatted table')
-  .option('--interactive', 'interactive mode: step through findings')
+  .option('--demo', 'animated cinematic spinners (off by default)')
   .option('--benchmark', 'show scan performance metrics')
   .action(scanCommand);
 

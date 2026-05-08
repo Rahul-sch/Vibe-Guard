@@ -8,8 +8,12 @@ export const nodeRules: DetectionRule[] = [
     category: 'injection',
     languages: ['node', 'typescript'],
     filePatterns: ['*.js', '*.ts', '*.mjs', '*.cjs'],
-    pattern: /(?:child_process\.)?exec(?:Sync)?\s*\(`/g,
-    message: 'child_process.exec() runs commands in a shell. Untrusted input leads to command injection.',
+    // Match exec()/execSync() where the argument is built dynamically:
+    // - template literal:  exec(`ls ${dir}`)
+    // - string concat:     exec("ls " + dir)
+    // - bare identifier:   exec(cmd)
+    pattern: /(?:child_process\.)?exec(?:Sync)?\s*\(\s*(?:`[^`]*\$\{|[`'"][^`'"]*[`'"]\s*\+|\w+\s*\))/g,
+    message: 'child_process.exec() runs commands in a shell. Dynamic input leads to command injection.',
     remediation: 'Use child_process.spawn() or execFile() with argument arrays. Never pass user input to shell.',
     confidence: 'high',
     cwe: 'CWE-78',

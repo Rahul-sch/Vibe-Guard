@@ -88,7 +88,7 @@ jobs:
         id: scan
         run: |
           vibeguard scan --json${aiVerifyFlag} --severity ${options.severityThreshold} > scan-results.json || true
-          echo "findings=\$(jq -r '.findings | length' scan-results.json)" >> $GITHUB_OUTPUT
+          echo "findings=$(jq -r '.findings | length' scan-results.json)" >> $GITHUB_OUTPUT
 
       - name: Post PR comment
         if: steps.scan.outputs.findings != '0'

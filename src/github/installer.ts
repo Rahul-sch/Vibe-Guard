@@ -1,6 +1,6 @@
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
-import { execSync } from 'child_process';
+import { spawnSync } from 'node:child_process';
 import type { InstallOptions } from './types.js';
 import { generateWorkflowYAML } from './workflow-generator.js';
 
@@ -29,7 +29,6 @@ export function installGitHubWorkflow(projectPath: string, options: InstallOptio
   // Try to detect repo
   try {
     // Security: Use spawnSync with argument array to prevent command injection
-    const { spawnSync } = require('child_process');
     const result = spawnSync('git', ['config', '--get', 'remote.origin.url'], {
       cwd: projectPath,
       encoding: 'utf-8',

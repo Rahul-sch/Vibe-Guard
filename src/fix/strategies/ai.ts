@@ -30,7 +30,7 @@ export function createAIFixStrategy(aiProvider: AIProvider): FixStrategy {
   return {
     name: 'ai-generated',
 
-    canFix(finding: Finding, content: string): boolean {
+    canFix(finding: Finding, _content: string): boolean {
       // AI can attempt to fix any finding with a valid snippet and match offset
       return !!(finding.snippet && finding.matchOffset !== undefined);
     },

@@ -13,7 +13,7 @@
     "bin"
   ],
   "scripts": {
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run build && npm test",
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "lint": "eslint src --ext .ts",
@@ -28,8 +28,16 @@
     "vibe-coding",
     "static-analysis"
   ],
-  "author": "",
+  "author": "Rahul Bainsla",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rahul-sch/Vibe-Guard.git"
+  },
+  "homepage": "https://github.com/Rahul-sch/Vibe-Guard#readme",
+  "bugs": {
+    "url": "https://github.com/Rahul-sch/Vibe-Guard/issues"
+  },
   "dependencies": {
     "boxen": "^8.0.1",
     "chalk": "^5.3.0",

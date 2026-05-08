@@ -3,7 +3,7 @@ import type { GitHubConfig, PR, PRFile, ReviewInput } from './types.js';
 export class GitHubClient {
   constructor(private config: GitHubConfig) {}
 
-  private async fetch(endpoint: string, options: RequestInit = {}): Promise<any> {
+  private async fetch(endpoint: string, options: RequestInit = {}): Promise<unknown> {
     const [owner, repo] = this.config.repo.split('/');
     const url = `https://api.github.com/repos/${owner}/${repo}${endpoint}`;
 
@@ -27,11 +27,11 @@ export class GitHubClient {
   }
 
   async getPullRequest(prNumber: number): Promise<PR> {
-    return this.fetch(`/pulls/${prNumber}`);
+    return this.fetch(`/pulls/${prNumber}`) as Promise<PR>;
   }
 
   async getPullRequestFiles(prNumber: number): Promise<PRFile[]> {
-    return this.fetch(`/pulls/${prNumber}/files`);
+    return this.fetch(`/pulls/${prNumber}/files`) as Promise<PRFile[]>;
   }
 
   async postComment(issueNumber: number, body: string): Promise<void> {

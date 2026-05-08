@@ -3,6 +3,7 @@ import boxen from 'boxen';
 import type { ScanResult, Finding } from '../rules/types.js';
 import type { Reporter } from './types.js';
 import { generateExploitPayload, hasExploitPayload } from '../security/exploit-simulator.js';
+import { VERSION } from '../index.js';
 
 export class ConsoleReporter implements Reporter {
   private noColor: boolean;
@@ -15,7 +16,7 @@ export class ConsoleReporter implements Reporter {
     const lines: string[] = [];
 
     lines.push('');
-    lines.push(this.style('  VibeGuard v1.0.0', 'bold'));
+    lines.push(this.style(`  VibeGuard v${VERSION}`, 'bold'));
     lines.push('');
     lines.push(`  Scanning complete`);
     lines.push(`  Files: ${result.scannedFiles} scanned, ${result.skippedFiles} skipped`);

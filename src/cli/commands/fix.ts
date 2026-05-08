@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { execSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { createInterface } from 'node:readline';
 import { scan } from '../../engine/index.js';
 import { resolveConfig, type CLIOptions } from '../../config/index.js';
@@ -7,7 +7,6 @@ import {
   isFixable,
   getFixableFindings,
   generateFix,
-  printDiff,
   applyFixes,
 } from '../../fix/index.js';
 import type { Fix, FixResult } from '../../fix/types.js';
@@ -16,7 +15,7 @@ import { createProvider } from '../../ai/provider.js';
 import { createAIFixStrategy } from '../../fix/strategies/ai.js';
 import { verifyAIFixes } from '../../fix/ai-verifier.js';
 import { readFileSync } from 'fs';
-import { phases, sleep } from '../spinner.js';
+import { phases } from '../spinner.js';
 import { formatMultipleDiffs } from '../../fix/diff-formatter.js';
 
 export interface FixCommandOptions extends CLIOptions {
@@ -223,14 +222,20 @@ export async function fixCommand(
     try {
       for (const file of modifiedFiles) {
         // Security: Use spawn with argument array to prevent command injection
-        const { spawnSync } = require('child_process');
-        const result = spawnSync('git', ['add', file], { stdio: 'pipe', encoding: 'utf-8' });
+        const result = spawnSync('git', ['add', '--', file], {
+          cwd: resolvedPath,
+          stdio: 'pipe',
+          encoding: 'utf-8',
+        });
         if (result.error) {
           throw result.error;
         }
+        if (result.status !== 0) {
+          throw new Error(result.stderr?.toString() || `git add exited with status ${result.status}`);
+        }
       }
       console.log('\nChanges staged for commit.');
-    } catch (error) {
+    } catch {
       console.error('\x1b[33mWarning: Could not stage files with git.\x1b[0m');
     }
   }

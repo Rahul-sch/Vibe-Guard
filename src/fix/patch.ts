@@ -4,7 +4,7 @@ import type { Fix, ApplyResult } from './types.js';
 /**
  * Generate a unified diff string for a fix
  */
-export function generateUnifiedDiff(fix: Fix, content?: string): string {
+export function generateUnifiedDiff(fix: Fix, _content?: string): string {
   const original = fix.original;
   const replacement = fix.replacement;
 

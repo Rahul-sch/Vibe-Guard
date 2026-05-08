@@ -53,13 +53,29 @@ export function filterRulesForFile(
     const langMatch = rule.languages.some((lang) => languages.includes(lang));
     if (!langMatch) return false;
 
-    const patternMatch = rule.filePatterns.some((pattern) => {
-      if (pattern.startsWith('*')) {
-        return basename.endsWith(pattern.slice(1));
-      }
-      return basename === pattern || basename.toLowerCase() === pattern.toLowerCase();
-    });
+    const patternMatch = rule.filePatterns.some((pattern) => matchesPattern(basename, pattern));
 
     return patternMatch;
   });
+}
+
+function matchesPattern(basename: string, pattern: string): boolean {
+  // Strip globstar prefix: a leading "**" followed by "/" is equivalent to no prefix
+  // when matching against a basename.
+  let p = pattern;
+  if (p.startsWith('**' + '/')) p = p.slice(3);
+
+  if (p === '*' || p === '**') return true;
+
+  if (p.startsWith('*.') && p.indexOf('*', 2) === -1) {
+    return basename.endsWith(p.slice(1));
+  }
+
+  // Trailing wildcard, e.g. `*.env*`
+  if (p.startsWith('*.') && p.endsWith('*')) {
+    const stem = p.slice(1, -1); // ".env"
+    return basename.includes(stem);
+  }
+
+  return basename === p || basename.toLowerCase() === p.toLowerCase();
 }

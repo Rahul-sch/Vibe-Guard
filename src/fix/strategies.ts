@@ -8,7 +8,7 @@ import type { FixStrategy, FixResult } from './types.js';
 export const evalToJsonParse: FixStrategy = {
   name: 'eval-to-json-parse',
 
-  canFix(finding: Finding, content: string): boolean {
+  canFix(finding: Finding, _content: string): boolean {
     // Must have a valid match offset
     if (finding.matchOffset === undefined) return false;
     // Must contain eval(
@@ -21,7 +21,6 @@ export const evalToJsonParse: FixStrategy = {
     }
 
     const start = finding.matchOffset;
-    const matchLen = finding.match.length;
 
     // Find the full eval(...) call including the closing paren
     // We need to find the matching closing parenthesis
@@ -79,13 +78,13 @@ export const evalToJsonParse: FixStrategy = {
 export const hardcodedToEnv: FixStrategy = {
   name: 'hardcoded-to-env',
 
-  canFix(finding: Finding, content: string): boolean {
+  canFix(finding: Finding, _content: string): boolean {
     if (finding.matchOffset === undefined) return false;
     // Must be an assignment with a string value
     return /(?:api[_-]?key|secret|password|token|auth[_-]?token|private[_-]?key)\s*[:=]\s*['"][^'"]+['"]/i.test(finding.match);
   },
 
-  generateFix(finding: Finding, content: string): FixResult {
+  generateFix(finding: Finding, _content: string): FixResult {
     if (finding.matchOffset === undefined) {
       return { success: false, fix: null, error: 'No match offset available' };
     }
@@ -142,12 +141,12 @@ export const hardcodedToEnv: FixStrategy = {
 export const shellTrueToFalse: FixStrategy = {
   name: 'shell-true-to-false',
 
-  canFix(finding: Finding, content: string): boolean {
+  canFix(finding: Finding, _content: string): boolean {
     if (finding.matchOffset === undefined) return false;
     return /shell\s*=\s*True/i.test(finding.match);
   },
 
-  generateFix(finding: Finding, content: string): FixResult {
+  generateFix(finding: Finding, _content: string): FixResult {
     if (finding.matchOffset === undefined) {
       return { success: false, fix: null, error: 'No match offset available' };
     }
@@ -184,12 +183,12 @@ export const shellTrueToFalse: FixStrategy = {
 export const removeVerifyFalse: FixStrategy = {
   name: 'remove-verify-false',
 
-  canFix(finding: Finding, content: string): boolean {
+  canFix(finding: Finding, _content: string): boolean {
     if (finding.matchOffset === undefined) return false;
     return /verify\s*=\s*False/i.test(finding.match);
   },
 
-  generateFix(finding: Finding, content: string): FixResult {
+  generateFix(finding: Finding, _content: string): FixResult {
     if (finding.matchOffset === undefined) {
       return { success: false, fix: null, error: 'No match offset available' };
     }
