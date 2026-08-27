@@ -13,10 +13,14 @@ describe('Python request-to-sink rules', () => {
     ['VG-PY-007', 'open(request.args["filename"])'],
     ['VG-PY-007', 'send_file(request.form.get("path"))'],
     ['VG-PY-007', "open( request.values.get('archive') )"],
+    ['VG-PY-007', 'Path(request.GET["filename"])'],
+    ['VG-PY-007', 'open(request.POST.get("path"))'],
     ['VG-PY-008', 'requests.get(request.args.get("url"))'],
     ['VG-PY-008', 'requests.post(request.values["webhook"])'],
     ['VG-PY-008', "requests.delete( request.form['endpoint'] )"],
     ['VG-PY-008', 'requests.request(request.args.get("method"))'],
+    ['VG-PY-008', 'httpx.get(request.GET.get("url"))'],
+    ['VG-PY-008', 'urllib.request.urlopen(request.POST["callback"])'],
   ])('detects %s in %s', (ruleId, source) => {
     expect(matches(ruleId, source)).toHaveLength(1);
   });
