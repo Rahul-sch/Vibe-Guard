@@ -14,9 +14,13 @@ describe('Node request-to-sink rules', () => {
     ['VG-NODE-006', 'res.sendFile(req.params.filename)'],
     ['VG-NODE-006', 'readFileSync( req.body.file )'],
     ['VG-NODE-006', "createReadStream(req.query['download'])"],
+    ['VG-NODE-006', 'sendFile(request.query.file)'],
     ['VG-NODE-007', 'fetch(req.body.url)'],
     ['VG-NODE-007', 'axios.get(req.query["target"])'],
     ['VG-NODE-007', 'axios.delete( req.params.endpoint )'],
+    ['VG-NODE-007', 'http.get(request.query.url)'],
+    ['VG-NODE-007', 'undici.request(req.body.target)'],
+    ['VG-NODE-007', 'got(req.params.webhook)'],
   ])('detects %s in %s', (ruleId, source) => {
     expect(matches(ruleId, source)).toHaveLength(1);
   });
