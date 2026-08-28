@@ -1,6 +1,6 @@
 {
   "name": "@rahul-sch/vibeguard",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Regex-first security scanner for AI-generated code",
   "type": "module",
   "main": "dist/index.js",
@@ -13,8 +13,10 @@
     "bin"
   ],
   "scripts": {
-    "prepublishOnly": "npm run build && npm test",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run check",
     "build": "tsc",
+    "check": "npm run lint && npm test && npm run build",
     "dev": "tsx src/index.ts",
     "lint": "eslint src --ext .ts",
     "format": "prettier --write src",
@@ -56,7 +58,7 @@
     "prettier": "^3.3.2",
     "tsx": "^4.15.6",
     "typescript": "^5.4.5",
-    "vitest": "^1.6.0"
+    "vitest": "^3.2.6"
   },
   "engines": {
     "node": ">=18"
