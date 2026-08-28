@@ -4,6 +4,9 @@ import { VERSION, NAME } from '../index.js';
 import { scanCommand } from './commands/scan.js';
 import { fixCommand } from './commands/fix.js';
 import { githubCommand } from './commands/github.js';
+import { loginCommand } from './commands/login.js';
+import { logoutCommand } from './commands/logout.js';
+import { whoamiCommand } from './commands/whoami.js';
 import { explainRule, explainAllRules } from './explain.js';
 import {
   severityOption,
@@ -108,5 +111,20 @@ program
   .option('--severity <level>', 'minimum severity to report', 'warning')
   .option('--ai-verify', 'enable AI verification')
   .action(githubCommand);
+
+program
+  .command('login')
+  .description('Sign in with GitHub')
+  .action(async () => { await loginCommand(); });
+
+program
+  .command('logout')
+  .description('Remove the locally stored GitHub session')
+  .action(async () => { await logoutCommand(); });
+
+program
+  .command('whoami')
+  .description('Show the currently authenticated GitHub user')
+  .action(async () => { await whoamiCommand(); });
 
 program.parse();

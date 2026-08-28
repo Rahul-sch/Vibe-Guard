@@ -1,2 +1,4 @@
 export const VERSION = '1.0.2';
 export const NAME = 'vibeguard';
+
+export * from './auth/index.js';
