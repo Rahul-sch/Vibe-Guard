@@ -11,6 +11,7 @@ Regex-first security scanner for AI-generated ("vibe-coded") projects. Catches s
 - **Rule explanations** - `vibeguard --why VG-SEC-001` for detailed guidance
 - **Benchmarking** - performance metrics with `--benchmark` flag
 - **Auto-fix support** - automatically fix common issues with `vibeguard fix`
+- **Optional GitHub sign-in** - authenticate through GitHub's browser-based device flow
 - **Zero config** - works out of the box with sensible defaults
 
 ## Installation
@@ -52,6 +53,11 @@ vibeguard --ai --ai-key sk-xxx
 # Auto-fix issues
 vibeguard fix --dry-run
 vibeguard fix --yes
+
+# Optional GitHub account
+vibeguard login
+vibeguard whoami
+vibeguard logout
 ```
 
 ## CLI Options
@@ -87,6 +93,14 @@ vibeguard fix --yes
 | `--ai` | Use AI to generate fixes for non-regex-fixable issues |
 | `--ai-key <key>` | API key for AI provider |
 
+### Authentication Commands
+
+| Command | Description |
+|---------|-------------|
+| `vibeguard login` | Sign in through GitHub's device authorization page |
+| `vibeguard whoami` | Verify and display the authenticated GitHub user |
+| `vibeguard logout` | Remove the locally stored GitHub credential |
+
 ## Exit Codes
 
 | Code | Meaning |
@@ -114,20 +128,24 @@ vibeguard fix --yes
 - `VG-SEC-014` - JWT Secret
 - `VG-SEC-015` - Generic API Key Pattern
 
-### Python (6 rules)
+### Python (8 rules)
 - `VG-PY-001` - Shell command exec (shell=True)
 - `VG-PY-002` - OS system call
 - `VG-PY-003` - Unsafe YAML load
 - `VG-PY-004` - Insecure pickle deserialization
 - `VG-PY-005` - Flask debug mode enabled
 - `VG-PY-006` - Disabled SSL verification
+- `VG-PY-007` - Request data used as a file path
+- `VG-PY-008` - Request data used as an outbound URL
 
-### Node.js (5 rules)
+### Node.js (7 rules)
 - `VG-NODE-001` - Child process exec
 - `VG-NODE-002` - Spawn with shell
 - `VG-NODE-003` - Unsafe HTML rendering (React)
 - `VG-NODE-004` - Disabled TLS verification
 - `VG-NODE-005` - TLS reject env bypass
+- `VG-NODE-006` - Request data used as a file path
+- `VG-NODE-007` - Request data used as an outbound URL
 
 ### Cryptography (7 rules)
 - `VG-CRYPTO-001` - Weak Hash Algorithm (MD5)
@@ -221,6 +239,21 @@ Create `vibeguard.config.json` in your project root:
   "format": "console"
 }
 ```
+
+## GitHub Sign-In
+
+GitHub sign-in is optional. Local scanning and fixing continue to work without an account.
+
+Before distributing the login feature, create a GitHub OAuth app, enable **Device Flow**, and provide its public client ID:
+
+```bash
+export VIBEGUARD_GITHUB_CLIENT_ID=your_oauth_client_id
+vibeguard login
+```
+
+The CLI displays a one-time code and GitHub verification URL. After approval, use `vibeguard whoami` to verify the session. The OAuth app requests only the `read:user` scope, and its client secret must never be included in this package.
+
+Credentials are stored outside the scanned project in the user's VibeGuard configuration directory. On Unix systems, the directory and credential file use owner-only permissions (`0700` and `0600`). Set `VIBEGUARD_CONFIG_DIR` to override the location.
 
 ## AI Verification
 

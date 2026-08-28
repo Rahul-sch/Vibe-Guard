@@ -13,12 +13,14 @@ VibeGuard is a security-focused CLI tool that scans codebases for vulnerabilitie
 2. **API Keys** - Optional AI provider keys (OpenAI, Anthropic, Groq)
 3. **Scanned Code** - Potentially sensitive source code
 4. **Generated Fixes** - Auto-generated code modifications
+5. **GitHub Session** - Optional OAuth access token used to identify the CLI user
 
 ### Entry Points
 1. **CLI Arguments** - User-provided paths and options
 2. **Scanned Files** - Malicious files in target directory
 3. **AI API Responses** - External API payloads
 4. **GitHub API** - External repository data
+5. **OAuth Device Flow** - GitHub authorization responses and locally persisted credentials
 
 ### Attacker Goals
 1. **Command Injection** - Execute arbitrary commands via malicious file paths
@@ -26,10 +28,21 @@ VibeGuard is a security-focused CLI tool that scans codebases for vulnerabilitie
 3. **API Key Theft** - Exfiltrate AI provider keys
 4. **Code Injection** - Inject malicious code via AI responses
 5. **DoS** - Exhaust resources or API quotas
+6. **Session Theft** - Read or disclose a locally stored GitHub access token
 
 ---
 
 ## Implemented Security Controls
+
+### 0. GitHub Authentication
+
+- Uses GitHub's device authorization flow; the CLI never collects passwords.
+- Requests only the `read:user` scope.
+- Requires a public OAuth client ID and never embeds a client secret.
+- Verifies the token against GitHub before persisting it.
+- Never prints the access token in CLI output.
+- Writes credentials atomically outside project directories with owner-only Unix permissions.
+- Keeps local scanning available without authentication.
 
 ### 1. Command Injection Prevention
 
