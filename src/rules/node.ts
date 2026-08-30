@@ -159,4 +159,18 @@ export const nodeRules: DetectionRule[] = [
     cwe: 'CWE-113',
     owasp: 'A03:2021',
   },
+  {
+    id: 'VG-NODE-012',
+    title: 'Filesystem Root Exposed as Static Content',
+    severity: 'critical',
+    category: 'config',
+    languages: ['node', 'typescript'],
+    filePatterns: ['*.js', '*.ts', '*.mjs', '*.cjs'],
+    pattern: /express\.static\s*\(\s*['"]\/(?:['"]|\*['"])/g,
+    message: 'The filesystem root is exposed as static content, allowing disclosure of sensitive host files.',
+    remediation: 'Serve only a dedicated public-assets directory with no secrets or application source.',
+    confidence: 'high',
+    cwe: 'CWE-552',
+    owasp: 'A05:2021',
+  },
 ];

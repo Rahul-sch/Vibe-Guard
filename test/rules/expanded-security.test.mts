@@ -32,4 +32,10 @@ describe('expanded high-confidence security rules', () => {
     expect(matches('VG-NODE-011', "res.append('X-Trace', request.headers['x-trace'])")).toHaveLength(1);
     expect(matches('VG-NODE-011', "res.setHeader('X-Frame-Options', 'DENY')")).toHaveLength(0);
   });
+
+  it('detects the filesystem root exposed as static content', () => {
+    expect(matches('VG-NODE-012', "app.use(express.static('/'))")).toHaveLength(1);
+    expect(matches('VG-NODE-012', 'app.use(express.static("/*"))')).toHaveLength(1);
+    expect(matches('VG-NODE-012', "app.use(express.static('public'))")).toHaveLength(0);
+  });
 });
