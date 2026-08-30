@@ -146,4 +146,18 @@ export const pythonRules: DetectionRule[] = [
     cwe: 'CWE-1336',
     owasp: 'A03:2021',
   },
+  {
+    id: 'VG-PY-011',
+    title: 'Request Data Used as Python Code',
+    severity: 'critical',
+    category: 'injection',
+    languages: ['python'],
+    filePatterns: ['*.py'],
+    pattern: /(?:eval|exec|compile)\s*\(\s*request\.(?:args|form|values|GET|POST)(?:\.get\s*\([^)]*\)|\s*\[[^\]]+\])/g,
+    message: 'Request data is evaluated as Python code, enabling remote code execution.',
+    remediation: 'Replace dynamic evaluation with explicit parsing and an allowlist of supported operations.',
+    confidence: 'high',
+    cwe: 'CWE-95',
+    owasp: 'A03:2021',
+  },
 ];

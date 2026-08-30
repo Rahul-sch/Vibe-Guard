@@ -50,4 +50,10 @@ describe('expanded high-confidence security rules', () => {
     expect(matches('VG-PY-010', 'jinja2.Template(request.form["content"])')).toHaveLength(1);
     expect(matches('VG-PY-010', 'render_template("profile.html", name=request.args.get("name"))')).toHaveLength(0);
   });
+
+  it('detects request data evaluated as Python code', () => {
+    expect(matches('VG-PY-011', 'eval(request.args.get("expression"))')).toHaveLength(1);
+    expect(matches('VG-PY-011', 'exec(request.POST["code"])')).toHaveLength(1);
+    expect(matches('VG-PY-011', 'ast.literal_eval(config_value)')).toHaveLength(0);
+  });
 });
