@@ -202,4 +202,18 @@ export const pythonRules: DetectionRule[] = [
     cwe: 'CWE-73',
     owasp: 'A01:2021',
   },
+  {
+    id: 'VG-PY-015',
+    title: 'Request Data Used as Response Header',
+    severity: 'critical',
+    category: 'web',
+    languages: ['python'],
+    filePatterns: ['*.py'],
+    pattern: /response(?:\.headers)?\s*\[[^\]]+\]\s*=\s*request\.(?:args|form|values|GET|POST|headers)(?:\.get\s*\([^)]*\)|\s*\[[^\]]+\])/g,
+    message: 'Request data is copied directly into a response header, enabling HTTP response splitting.',
+    remediation: 'Use fixed or allowlisted header values and reject carriage returns and line feeds.',
+    confidence: 'high',
+    cwe: 'CWE-113',
+    owasp: 'A03:2021',
+  },
 ];

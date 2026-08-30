@@ -104,4 +104,10 @@ describe('expanded high-confidence security rules', () => {
     expect(matches('VG-PY-014', 'shutil.rmtree(request.POST["directory"])')).toHaveLength(1);
     expect(matches('VG-PY-014', 'os.remove(validated_path)')).toHaveLength(0);
   });
+
+  it('detects Python request data copied into response headers', () => {
+    expect(matches('VG-PY-015', 'response.headers["X-Trace"] = request.args.get("trace")')).toHaveLength(1);
+    expect(matches('VG-PY-015', 'response["Location"] = request.GET["next"]')).toHaveLength(1);
+    expect(matches('VG-PY-015', 'response.headers["X-Frame-Options"] = "DENY"')).toHaveLength(0);
+  });
 });
