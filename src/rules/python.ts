@@ -160,4 +160,18 @@ export const pythonRules: DetectionRule[] = [
     cwe: 'CWE-95',
     owasp: 'A03:2021',
   },
+  {
+    id: 'VG-PY-012',
+    title: 'Request Data Used as Redirect Target',
+    severity: 'critical',
+    category: 'web',
+    languages: ['python'],
+    filePatterns: ['*.py'],
+    pattern: /(?:redirect|HttpResponseRedirect|HttpResponsePermanentRedirect)\s*\(\s*request\.(?:args|form|values|GET|POST)(?:\.get\s*\([^)]*\)|\s*\[[^\]]+\])/g,
+    message: 'Request data is used directly as a redirect target, enabling phishing through an open redirect.',
+    remediation: 'Allow only relative paths or validate the destination host against a strict allowlist.',
+    confidence: 'high',
+    cwe: 'CWE-601',
+    owasp: 'A01:2021',
+  },
 ];

@@ -56,4 +56,10 @@ describe('expanded high-confidence security rules', () => {
     expect(matches('VG-PY-011', 'exec(request.POST["code"])')).toHaveLength(1);
     expect(matches('VG-PY-011', 'ast.literal_eval(config_value)')).toHaveLength(0);
   });
+
+  it('detects request data used directly as a redirect target', () => {
+    expect(matches('VG-PY-012', 'redirect(request.args.get("next"))')).toHaveLength(1);
+    expect(matches('VG-PY-012', 'HttpResponseRedirect(request.GET["return_to"])')).toHaveLength(1);
+    expect(matches('VG-PY-012', 'redirect(url_for("dashboard"))')).toHaveLength(0);
+  });
 });
