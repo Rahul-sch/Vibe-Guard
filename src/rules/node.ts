@@ -229,4 +229,18 @@ export const nodeRules: DetectionRule[] = [
     cwe: 'CWE-1333',
     owasp: 'A06:2021',
   },
+  {
+    id: 'VG-NODE-017',
+    title: 'Request Data Used as Process Executable',
+    severity: 'critical',
+    category: 'injection',
+    languages: ['node', 'typescript'],
+    filePatterns: ['*.js', '*.ts', '*.mjs', '*.cjs'],
+    pattern: /(?:child_process\.)?(?:spawn|spawnSync|execFile|execFileSync)\s*\(\s*(?:req|request)\.(?:query|params|body)(?:\.[A-Za-z_$][\w$]*|\s*\[[^\]]+\])/g,
+    message: 'Request data selects the executable for a child process, enabling arbitrary command execution.',
+    remediation: 'Map allowlisted operation names to fixed executable paths and pass validated arguments separately.',
+    confidence: 'high',
+    cwe: 'CWE-78',
+    owasp: 'A03:2021',
+  },
 ];

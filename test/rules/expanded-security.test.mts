@@ -63,6 +63,12 @@ describe('expanded high-confidence security rules', () => {
     expect(matches('VG-NODE-016', "new RegExp('^[a-z]+$')")).toHaveLength(0);
   });
 
+  it('detects Node request data used as a process executable', () => {
+    expect(matches('VG-NODE-017', 'spawn(req.body.command, args)')).toHaveLength(1);
+    expect(matches('VG-NODE-017', "child_process.execFile(request.query['binary'], args)")).toHaveLength(1);
+    expect(matches('VG-NODE-017', "spawn('/usr/bin/convert', validatedArgs)")).toHaveLength(0);
+  });
+
   it('detects request data executed directly as SQL', () => {
     expect(matches('VG-PY-009', 'cursor.execute(request.args.get("sql"))')).toHaveLength(1);
     expect(matches('VG-PY-009', 'db.executemany(request.POST["query"])')).toHaveLength(1);
