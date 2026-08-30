@@ -20,4 +20,10 @@ describe('expanded high-confidence security rules', () => {
     expect(matches('VG-NODE-009', "import(request.body['module'])")).toHaveLength(1);
     expect(matches('VG-NODE-009', "require('./plugins/safe.js')")).toHaveLength(0);
   });
+
+  it('detects request data used as a file mutation path', () => {
+    expect(matches('VG-NODE-010', 'fs.writeFile(req.body.path, data, cb)')).toHaveLength(1);
+    expect(matches('VG-NODE-010', 'unlinkSync(request.query["file"])')).toHaveLength(1);
+    expect(matches('VG-NODE-010', 'fs.writeFile(safePath, data, cb)')).toHaveLength(0);
+  });
 });

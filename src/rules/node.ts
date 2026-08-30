@@ -131,4 +131,18 @@ export const nodeRules: DetectionRule[] = [
     cwe: 'CWE-94',
     owasp: 'A03:2021',
   },
+  {
+    id: 'VG-NODE-010',
+    title: 'Request Data Used as File Mutation Path',
+    severity: 'critical',
+    category: 'injection',
+    languages: ['node', 'typescript'],
+    filePatterns: ['*.js', '*.ts', '*.mjs', '*.cjs'],
+    pattern: /(?:writeFile|writeFileSync|createWriteStream|unlink|unlinkSync|rm|rmSync|rename|renameSync)\s*\(\s*(?:req|request)\.(?:query|params|body)(?:\.[A-Za-z_$][\w$]*|\s*\[[^\]]+\])/g,
+    message: 'Request data is used directly as a file mutation path, enabling arbitrary file overwrite or deletion.',
+    remediation: 'Resolve against a fixed base directory, reject escaping paths, and generate server-side filenames.',
+    confidence: 'high',
+    cwe: 'CWE-73',
+    owasp: 'A01:2021',
+  },
 ];
