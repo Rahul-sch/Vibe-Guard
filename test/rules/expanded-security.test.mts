@@ -1,0 +1,17 @@
+import { describe, expect, it } from 'vitest';
+import { matchRule } from '../../src/engine/matcher.js';
+import { ruleById } from '../../src/rules/index.js';
+
+function matches(ruleId: string, source: string) {
+  const rule = ruleById.get(ruleId);
+  if (!rule) throw new Error(`Missing rule ${ruleId}`);
+  return matchRule(source, rule);
+}
+
+describe('expanded high-confidence security rules', () => {
+  it('detects direct request objects used as MongoDB queries', () => {
+    expect(matches('VG-NODE-008', 'users.find(req.query)')).toHaveLength(1);
+    expect(matches('VG-NODE-008', 'users.findOne(request.body.filter)')).toHaveLength(1);
+    expect(matches('VG-NODE-008', 'users.find({ id: validatedId })')).toHaveLength(0);
+  });
+});

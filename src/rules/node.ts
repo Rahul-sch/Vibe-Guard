@@ -103,4 +103,18 @@ export const nodeRules: DetectionRule[] = [
     cwe: 'CWE-918',
     owasp: 'A10:2021',
   },
+  {
+    id: 'VG-NODE-008',
+    title: 'Request Data Used as MongoDB Query',
+    severity: 'critical',
+    category: 'injection',
+    languages: ['node', 'typescript'],
+    filePatterns: ['*.js', '*.ts', '*.mjs', '*.cjs'],
+    pattern: /\.(?:find|findOne|deleteOne|deleteMany|updateOne|updateMany|findOneAndUpdate)\s*\(\s*(?:req|request)\.(?:query|params|body)(?:\.[A-Za-z_$][\w$]*|\s*\[[^\]]+\])?/g,
+    message: 'Request data is used directly as a MongoDB query, enabling operator injection and authorization bypass.',
+    remediation: 'Build queries from allowlisted scalar fields and reject keys beginning with $ or containing dots.',
+    confidence: 'high',
+    cwe: 'CWE-943',
+    owasp: 'A03:2021',
+  },
 ];
