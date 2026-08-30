@@ -116,4 +116,10 @@ describe('expanded high-confidence security rules', () => {
     expect(matches('VG-PY-016', '__import__(request.POST["module"])')).toHaveLength(1);
     expect(matches('VG-PY-016', 'importlib.import_module(ALLOWED_PLUGINS[name])')).toHaveLength(0);
   });
+
+  it('detects Python request data compiled as a regular expression', () => {
+    expect(matches('VG-PY-017', 're.compile(request.args.get("pattern"))')).toHaveLength(1);
+    expect(matches('VG-PY-017', 're.compile(request.POST["search"], re.I)')).toHaveLength(1);
+    expect(matches('VG-PY-017', 're.compile(r"^[a-z]+$")')).toHaveLength(0);
+  });
 });

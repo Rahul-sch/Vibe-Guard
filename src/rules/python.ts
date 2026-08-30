@@ -230,4 +230,18 @@ export const pythonRules: DetectionRule[] = [
     cwe: 'CWE-94',
     owasp: 'A03:2021',
   },
+  {
+    id: 'VG-PY-017',
+    title: 'Request Data Used as Regular Expression',
+    severity: 'critical',
+    category: 'web',
+    languages: ['python'],
+    filePatterns: ['*.py'],
+    pattern: /re\.compile\s*\(\s*request\.(?:args|form|values|GET|POST)(?:\.get\s*\([^)]*\)|\s*\[[^\]]+\])/g,
+    message: 'Request data is compiled directly as a regular expression, enabling regular expression denial of service.',
+    remediation: 'Use fixed expressions or escape input, constrain its length, and enforce execution time limits.',
+    confidence: 'high',
+    cwe: 'CWE-1333',
+    owasp: 'A06:2021',
+  },
 ];
