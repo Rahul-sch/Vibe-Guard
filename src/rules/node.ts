@@ -173,4 +173,18 @@ export const nodeRules: DetectionRule[] = [
     cwe: 'CWE-552',
     owasp: 'A05:2021',
   },
+  {
+    id: 'VG-NODE-013',
+    title: 'Request Data Used as Redirect Target',
+    severity: 'critical',
+    category: 'web',
+    languages: ['node', 'typescript'],
+    filePatterns: ['*.js', '*.ts', '*.mjs', '*.cjs'],
+    pattern: /(?:res\.)?redirect\s*\(\s*(?:req|request)\.(?:query|params|body)(?:\.[A-Za-z_$][\w$]*|\s*\[[^\]]+\])/g,
+    message: 'Request data is used directly as a redirect target, enabling phishing through an open redirect.',
+    remediation: 'Allow only relative paths or validate the destination host against a strict allowlist.',
+    confidence: 'high',
+    cwe: 'CWE-601',
+    owasp: 'A01:2021',
+  },
 ];
