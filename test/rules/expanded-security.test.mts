@@ -110,4 +110,10 @@ describe('expanded high-confidence security rules', () => {
     expect(matches('VG-PY-015', 'response["Location"] = request.GET["next"]')).toHaveLength(1);
     expect(matches('VG-PY-015', 'response.headers["X-Frame-Options"] = "DENY"')).toHaveLength(0);
   });
+
+  it('detects Python request data used as a module name', () => {
+    expect(matches('VG-PY-016', 'importlib.import_module(request.args.get("plugin"))')).toHaveLength(1);
+    expect(matches('VG-PY-016', '__import__(request.POST["module"])')).toHaveLength(1);
+    expect(matches('VG-PY-016', 'importlib.import_module(ALLOWED_PLUGINS[name])')).toHaveLength(0);
+  });
 });

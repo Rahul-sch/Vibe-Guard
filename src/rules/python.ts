@@ -216,4 +216,18 @@ export const pythonRules: DetectionRule[] = [
     cwe: 'CWE-113',
     owasp: 'A03:2021',
   },
+  {
+    id: 'VG-PY-016',
+    title: 'Request Data Used as Module Name',
+    severity: 'critical',
+    category: 'injection',
+    languages: ['python'],
+    filePatterns: ['*.py'],
+    pattern: /(?:importlib\.import_module|__import__)\s*\(\s*request\.(?:args|form|values|GET|POST)(?:\.get\s*\([^)]*\)|\s*\[[^\]]+\])/g,
+    message: 'Request data controls a Python module name, enabling unintended code loading and execution.',
+    remediation: 'Map allowlisted identifiers to fixed module names; never accept a module name from a request.',
+    confidence: 'high',
+    cwe: 'CWE-94',
+    owasp: 'A03:2021',
+  },
 ];
