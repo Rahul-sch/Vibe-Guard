@@ -132,4 +132,18 @@ export const pythonRules: DetectionRule[] = [
     cwe: 'CWE-89',
     owasp: 'A03:2021',
   },
+  {
+    id: 'VG-PY-010',
+    title: 'Request Data Used as Jinja Template',
+    severity: 'critical',
+    category: 'injection',
+    languages: ['python'],
+    filePatterns: ['*.py'],
+    pattern: /(?:render_template_string|Environment\([^)]*\)\.from_string|jinja2\.Template)\s*\(\s*request\.(?:args|form|values|GET|POST)(?:\.get\s*\([^)]*\)|\s*\[[^\]]+\])/g,
+    message: 'Request data is compiled as a Jinja template, enabling server-side template injection and code execution.',
+    remediation: 'Render a fixed template and pass request data only as template context variables.',
+    confidence: 'high',
+    cwe: 'CWE-1336',
+    owasp: 'A03:2021',
+  },
 ];

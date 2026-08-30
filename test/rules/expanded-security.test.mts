@@ -44,4 +44,10 @@ describe('expanded high-confidence security rules', () => {
     expect(matches('VG-PY-009', 'db.executemany(request.POST["query"])')).toHaveLength(1);
     expect(matches('VG-PY-009', 'cursor.execute("SELECT * FROM users WHERE id = %s", [user_id])')).toHaveLength(0);
   });
+
+  it('detects request data compiled as a Jinja template', () => {
+    expect(matches('VG-PY-010', 'render_template_string(request.args.get("template"))')).toHaveLength(1);
+    expect(matches('VG-PY-010', 'jinja2.Template(request.form["content"])')).toHaveLength(1);
+    expect(matches('VG-PY-010', 'render_template("profile.html", name=request.args.get("name"))')).toHaveLength(0);
+  });
 });
