@@ -215,4 +215,18 @@ export const nodeRules: DetectionRule[] = [
     cwe: 'CWE-1336',
     owasp: 'A03:2021',
   },
+  {
+    id: 'VG-NODE-016',
+    title: 'Request Data Used as Regular Expression',
+    severity: 'critical',
+    category: 'web',
+    languages: ['node', 'typescript'],
+    filePatterns: ['*.js', '*.ts', '*.mjs', '*.cjs'],
+    pattern: /new\s+RegExp\s*\(\s*(?:req|request)\.(?:query|params|body)(?:\.[A-Za-z_$][\w$]*|\s*\[[^\]]+\])/g,
+    message: 'Request data is compiled directly as a regular expression, enabling regular expression denial of service.',
+    remediation: 'Use fixed expressions or escape input, constrain its length, and enforce execution time limits.',
+    confidence: 'high',
+    cwe: 'CWE-1333',
+    owasp: 'A06:2021',
+  },
 ];
