@@ -38,4 +38,10 @@ describe('expanded high-confidence security rules', () => {
     expect(matches('VG-NODE-012', 'app.use(express.static("/*"))')).toHaveLength(1);
     expect(matches('VG-NODE-012', "app.use(express.static('public'))")).toHaveLength(0);
   });
+
+  it('detects request data executed directly as SQL', () => {
+    expect(matches('VG-PY-009', 'cursor.execute(request.args.get("sql"))')).toHaveLength(1);
+    expect(matches('VG-PY-009', 'db.executemany(request.POST["query"])')).toHaveLength(1);
+    expect(matches('VG-PY-009', 'cursor.execute("SELECT * FROM users WHERE id = %s", [user_id])')).toHaveLength(0);
+  });
 });

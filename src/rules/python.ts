@@ -118,4 +118,18 @@ export const pythonRules: DetectionRule[] = [
     cwe: 'CWE-918',
     owasp: 'A10:2021',
   },
+  {
+    id: 'VG-PY-009',
+    title: 'Request Data Used as SQL Statement',
+    severity: 'critical',
+    category: 'injection',
+    languages: ['python'],
+    filePatterns: ['*.py'],
+    pattern: /\.execute(?:many)?\s*\(\s*request\.(?:args|form|values|GET|POST)(?:\.get\s*\([^)]*\)|\s*\[[^\]]+\])/g,
+    message: 'Request data is executed directly as a SQL statement, enabling SQL injection.',
+    remediation: 'Use a fixed SQL statement with parameter placeholders and pass request values separately.',
+    confidence: 'high',
+    cwe: 'CWE-89',
+    owasp: 'A03:2021',
+  },
 ];
