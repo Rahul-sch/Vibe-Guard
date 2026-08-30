@@ -145,4 +145,18 @@ export const nodeRules: DetectionRule[] = [
     cwe: 'CWE-73',
     owasp: 'A01:2021',
   },
+  {
+    id: 'VG-NODE-011',
+    title: 'Request Data Used as Response Header',
+    severity: 'critical',
+    category: 'web',
+    languages: ['node', 'typescript'],
+    filePatterns: ['*.js', '*.ts', '*.mjs', '*.cjs'],
+    pattern: /(?:setHeader|res\.(?:header|set|append))\s*\(\s*[^,]+,\s*(?:req|request)\.(?:query|params|body|headers)(?:\.[A-Za-z_$][\w$]*|\s*\[[^\]]+\])/g,
+    message: 'Request data is copied directly into a response header, enabling HTTP response splitting.',
+    remediation: 'Use fixed or allowlisted header values and reject carriage returns and line feeds.',
+    confidence: 'high',
+    cwe: 'CWE-113',
+    owasp: 'A03:2021',
+  },
 ];

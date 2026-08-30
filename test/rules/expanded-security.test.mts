@@ -26,4 +26,10 @@ describe('expanded high-confidence security rules', () => {
     expect(matches('VG-NODE-010', 'unlinkSync(request.query["file"])')).toHaveLength(1);
     expect(matches('VG-NODE-010', 'fs.writeFile(safePath, data, cb)')).toHaveLength(0);
   });
+
+  it('detects request data copied into response headers', () => {
+    expect(matches('VG-NODE-011', "res.setHeader('Location', req.query.next)")).toHaveLength(1);
+    expect(matches('VG-NODE-011', "res.append('X-Trace', request.headers['x-trace'])")).toHaveLength(1);
+    expect(matches('VG-NODE-011', "res.setHeader('X-Frame-Options', 'DENY')")).toHaveLength(0);
+  });
 });
