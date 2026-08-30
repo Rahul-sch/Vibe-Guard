@@ -244,4 +244,18 @@ export const pythonRules: DetectionRule[] = [
     cwe: 'CWE-1333',
     owasp: 'A06:2021',
   },
+  {
+    id: 'VG-PY-018',
+    title: 'Request Data Used as Process Command',
+    severity: 'critical',
+    category: 'injection',
+    languages: ['python'],
+    filePatterns: ['*.py'],
+    pattern: /(?:subprocess\.(?:run|call|check_call|check_output|Popen)|os\.spawn\w*)\s*\(\s*request\.(?:args|form|values|GET|POST)(?:\.get\s*\([^)]*\)|\s*\[[^\]]+\])/g,
+    message: 'Request data selects a process command, enabling arbitrary command execution.',
+    remediation: 'Map allowlisted operation names to fixed executable paths and pass validated arguments as a list.',
+    confidence: 'high',
+    cwe: 'CWE-78',
+    owasp: 'A03:2021',
+  },
 ];
