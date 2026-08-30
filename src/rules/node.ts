@@ -187,4 +187,18 @@ export const nodeRules: DetectionRule[] = [
     cwe: 'CWE-601',
     owasp: 'A01:2021',
   },
+  {
+    id: 'VG-NODE-014',
+    title: 'Request Data Used as SQL Statement',
+    severity: 'critical',
+    category: 'injection',
+    languages: ['node', 'typescript'],
+    filePatterns: ['*.js', '*.ts', '*.mjs', '*.cjs'],
+    pattern: /\.(?:query|execute)\s*\(\s*(?:req|request)\.(?:query|params|body)(?:\.[A-Za-z_$][\w$]*|\s*\[[^\]]+\])/g,
+    message: 'Request data is executed directly as a SQL statement, enabling SQL injection.',
+    remediation: 'Use a fixed SQL statement with parameter placeholders and pass request values separately.',
+    confidence: 'high',
+    cwe: 'CWE-89',
+    owasp: 'A03:2021',
+  },
 ];
