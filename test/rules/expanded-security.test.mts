@@ -51,6 +51,12 @@ describe('expanded high-confidence security rules', () => {
     expect(matches('VG-NODE-014', "db.query('SELECT * FROM users WHERE id = ?', [userId])")).toHaveLength(0);
   });
 
+  it('detects Node request data compiled as a server-side template', () => {
+    expect(matches('VG-NODE-015', 'ejs.compile(req.body.template)')).toHaveLength(1);
+    expect(matches('VG-NODE-015', "Handlebars.compile(request.query['source'])")).toHaveLength(1);
+    expect(matches('VG-NODE-015', 'pug.compile(trustedTemplate)')).toHaveLength(0);
+  });
+
   it('detects request data executed directly as SQL', () => {
     expect(matches('VG-PY-009', 'cursor.execute(request.args.get("sql"))')).toHaveLength(1);
     expect(matches('VG-PY-009', 'db.executemany(request.POST["query"])')).toHaveLength(1);

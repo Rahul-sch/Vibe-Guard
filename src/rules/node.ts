@@ -201,4 +201,18 @@ export const nodeRules: DetectionRule[] = [
     cwe: 'CWE-89',
     owasp: 'A03:2021',
   },
+  {
+    id: 'VG-NODE-015',
+    title: 'Request Data Compiled as Template',
+    severity: 'critical',
+    category: 'injection',
+    languages: ['node', 'typescript'],
+    filePatterns: ['*.js', '*.ts', '*.mjs', '*.cjs'],
+    pattern: /(?:ejs|pug|Handlebars|nunjucks)\.(?:compile|renderString)\s*\(\s*(?:req|request)\.(?:query|params|body)(?:\.[A-Za-z_$][\w$]*|\s*\[[^\]]+\])/g,
+    message: 'Request data is compiled as a server-side template, enabling template injection and code execution.',
+    remediation: 'Compile only fixed, trusted templates and pass request data as escaped template context.',
+    confidence: 'high',
+    cwe: 'CWE-1336',
+    owasp: 'A03:2021',
+  },
 ];
