@@ -98,4 +98,10 @@ describe('expanded high-confidence security rules', () => {
     expect(matches('VG-PY-013', 'tar.extractall(path=request.POST["output"])')).toHaveLength(1);
     expect(matches('VG-PY-013', 'archive.extractall(SAFE_EXTRACTION_DIR)')).toHaveLength(0);
   });
+
+  it('detects Python request data used as a file mutation path', () => {
+    expect(matches('VG-PY-014', 'os.remove(request.args.get("path"))')).toHaveLength(1);
+    expect(matches('VG-PY-014', 'shutil.rmtree(request.POST["directory"])')).toHaveLength(1);
+    expect(matches('VG-PY-014', 'os.remove(validated_path)')).toHaveLength(0);
+  });
 });

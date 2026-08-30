@@ -188,4 +188,18 @@ export const pythonRules: DetectionRule[] = [
     cwe: 'CWE-22',
     owasp: 'A01:2021',
   },
+  {
+    id: 'VG-PY-014',
+    title: 'Request Data Used as File Mutation Path',
+    severity: 'critical',
+    category: 'injection',
+    languages: ['python'],
+    filePatterns: ['*.py'],
+    pattern: /(?:(?:os\.)?(?:remove|unlink|rmdir)|shutil\.rmtree)\s*\(\s*request\.(?:args|form|values|GET|POST)(?:\.get\s*\([^)]*\)|\s*\[[^\]]+\])/g,
+    message: 'Request data is used directly as a file mutation path, enabling arbitrary file or directory deletion.',
+    remediation: 'Resolve against a fixed base directory and reject paths that escape it before mutating files.',
+    confidence: 'high',
+    cwe: 'CWE-73',
+    owasp: 'A01:2021',
+  },
 ];
