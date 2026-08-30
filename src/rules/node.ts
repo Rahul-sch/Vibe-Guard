@@ -117,4 +117,18 @@ export const nodeRules: DetectionRule[] = [
     cwe: 'CWE-943',
     owasp: 'A03:2021',
   },
+  {
+    id: 'VG-NODE-009',
+    title: 'Request Data Used as Module Path',
+    severity: 'critical',
+    category: 'injection',
+    languages: ['node', 'typescript'],
+    filePatterns: ['*.js', '*.ts', '*.mjs', '*.cjs'],
+    pattern: /(?:require|import)\s*\(\s*(?:req|request)\.(?:query|params|body)(?:\.[A-Za-z_$][\w$]*|\s*\[[^\]]+\])/g,
+    message: 'Request data controls a module path, enabling unintended code loading and path traversal.',
+    remediation: 'Map allowlisted identifiers to fixed module paths; never accept a module path from a request.',
+    confidence: 'high',
+    cwe: 'CWE-94',
+    owasp: 'A03:2021',
+  },
 ];

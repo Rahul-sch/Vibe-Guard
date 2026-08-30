@@ -14,4 +14,10 @@ describe('expanded high-confidence security rules', () => {
     expect(matches('VG-NODE-008', 'users.findOne(request.body.filter)')).toHaveLength(1);
     expect(matches('VG-NODE-008', 'users.find({ id: validatedId })')).toHaveLength(0);
   });
+
+  it('detects request data used as a module path', () => {
+    expect(matches('VG-NODE-009', 'require(req.query.plugin)')).toHaveLength(1);
+    expect(matches('VG-NODE-009', "import(request.body['module'])")).toHaveLength(1);
+    expect(matches('VG-NODE-009', "require('./plugins/safe.js')")).toHaveLength(0);
+  });
 });
