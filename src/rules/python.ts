@@ -174,4 +174,18 @@ export const pythonRules: DetectionRule[] = [
     cwe: 'CWE-601',
     owasp: 'A01:2021',
   },
+  {
+    id: 'VG-PY-013',
+    title: 'Request Data Used as Archive Extraction Path',
+    severity: 'critical',
+    category: 'injection',
+    languages: ['python'],
+    filePatterns: ['*.py'],
+    pattern: /\.extractall\s*\(\s*(?:path\s*=\s*)?request\.(?:args|form|values|GET|POST)(?:\.get\s*\([^)]*\)|\s*\[[^\]]+\])/g,
+    message: 'Request data controls the archive extraction directory, enabling writes outside the intended location.',
+    remediation: 'Extract only into a fixed server-owned directory and verify every member remains beneath it.',
+    confidence: 'high',
+    cwe: 'CWE-22',
+    owasp: 'A01:2021',
+  },
 ];
