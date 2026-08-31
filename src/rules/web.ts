@@ -31,7 +31,7 @@ export const webRules: DetectionRule[] = [
     severity: 'warning',
     languages: ['node', 'typescript'],
     filePatterns: ['**/*.js', '**/*.ts'],
-    pattern: /(?:setHeader|setCookie).*(?!.*secure)(?!.*httponly)/gi,
+    pattern: /(?:setHeader|setCookie)(?![^\n]*\bsecure\b)(?![^\n]*\bhttponly\b)[^\n]*/gi,
     confidence: 'medium',
     message: 'Cookie missing Secure and HttpOnly flags',
     remediation: 'Set Secure and HttpOnly flags on sensitive cookies',
