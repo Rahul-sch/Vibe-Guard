@@ -8,7 +8,7 @@ export const dockerRules: DetectionRule[] = [
     category: 'docker',
     languages: ['docker'],
     filePatterns: ['Dockerfile', '*.dockerfile', 'Dockerfile.*'],
-    pattern: /^(?!.*\bUSER\b).*$/gm,
+    pattern: /^(?![\s\S]*\bUSER\b)[\s\S]+$/g,
     message: 'Dockerfile has no USER directive. Container runs as root by default.',
     remediation: 'Add USER directive to run as non-root. Example: USER 1000:1000',
     confidence: 'medium',
