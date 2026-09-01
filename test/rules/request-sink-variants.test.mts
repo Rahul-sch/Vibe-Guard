@@ -73,4 +73,10 @@ describe('request sink syntax variants', () => {
     expectMatches('VG-PY-015', 'response["X-Forwarded"] = request.headers["X-Forwarded"]');
     expectNoMatch('VG-PY-015', 'response["Location"] = validated_location');
   });
+
+  it('covers Python imports from form and values inputs', () => {
+    expectMatches('VG-PY-016', 'importlib.import_module(request.form.get("backend"))');
+    expectMatches('VG-PY-016', '__import__(request.values["package"])');
+    expectNoMatch('VG-PY-016', 'importlib.import_module(approved_modules[name])');
+  });
 });
