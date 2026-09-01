@@ -13,4 +13,10 @@ describe('request sink syntax variants', () => {
     expectMatches('VG-NODE-009', "require(request.body['adapter'])");
     expectNoMatch('VG-NODE-009', "import('./adapters/safe.js')");
   });
+
+  it('covers rename and recursive removal request paths', () => {
+    expectMatches('VG-NODE-010', 'fs.rename(req.params.source, safeTarget, callback)');
+    expectMatches('VG-NODE-010', "rmSync(request.body['path'], { recursive: true })");
+    expectNoMatch('VG-NODE-010', 'fs.rename(validatedSource, safeTarget, callback)');
+  });
 });
