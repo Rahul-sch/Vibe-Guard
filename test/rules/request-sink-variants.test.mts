@@ -61,4 +61,10 @@ describe('request sink syntax variants', () => {
     expectMatches('VG-NODE-017', "execFileSync(request.params['tool'], args)");
     expectNoMatch('VG-NODE-017', 'execFileSync(approvedTool, validatedArgs)');
   });
+
+  it('covers Python unlink and directory-removal request paths', () => {
+    expectMatches('VG-PY-014', 'unlink(request.form.get("filename"))');
+    expectMatches('VG-PY-014', 'os.rmdir(request.values["directory"])');
+    expectNoMatch('VG-PY-014', 'os.rmdir(validated_directory)');
+  });
 });
