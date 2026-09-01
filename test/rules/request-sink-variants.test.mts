@@ -31,4 +31,10 @@ describe('request sink syntax variants', () => {
     expectMatches('VG-NODE-012', "express.static('/*')");
     expectNoMatch('VG-NODE-012', "express.static('/public')");
   });
+
+  it('covers redirect params and bracket-property targets', () => {
+    expectMatches('VG-NODE-013', 'res.redirect(req.params.destination)');
+    expectMatches('VG-NODE-013', "redirect(request.query['continue'])");
+    expectNoMatch('VG-NODE-013', 'res.redirect(allowedDestinations[name])');
+  });
 });
