@@ -79,4 +79,10 @@ describe('request sink syntax variants', () => {
     expectMatches('VG-PY-016', '__import__(request.values["package"])');
     expectNoMatch('VG-PY-016', 'importlib.import_module(approved_modules[name])');
   });
+
+  it('covers Python regular expressions from Django and form inputs', () => {
+    expectMatches('VG-PY-017', 're.compile(request.GET.get("filter"), re.I)');
+    expectMatches('VG-PY-017', 're.compile(request.form["pattern"])');
+    expectNoMatch('VG-PY-017', 're.compile(re.escape(user_input))');
+  });
 });
