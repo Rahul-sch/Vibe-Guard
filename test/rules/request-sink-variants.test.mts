@@ -25,4 +25,10 @@ describe('request sink syntax variants', () => {
     expectMatches('VG-NODE-011', "res.set('Location', request.query.next)");
     expectNoMatch('VG-NODE-011', "res.set('Cache-Control', 'no-store')");
   });
+
+  it('covers filesystem-root static mounts with spacing variants', () => {
+    expectMatches('VG-NODE-012', 'express.static( "/" )');
+    expectMatches('VG-NODE-012', "express.static('/*')");
+    expectNoMatch('VG-NODE-012', "express.static('/public')");
+  });
 });
