@@ -37,4 +37,10 @@ describe('request sink syntax variants', () => {
     expectMatches('VG-NODE-013', "redirect(request.query['continue'])");
     expectNoMatch('VG-NODE-013', 'res.redirect(allowedDestinations[name])');
   });
+
+  it('covers SQL execute and params-based statements', () => {
+    expectMatches('VG-NODE-014', 'connection.execute(req.params.statement)');
+    expectMatches('VG-NODE-014', "pool.query(request.body['sql'])");
+    expectNoMatch('VG-NODE-014', 'connection.execute(preparedStatement, values)');
+  });
 });
