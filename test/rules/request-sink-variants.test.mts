@@ -67,4 +67,10 @@ describe('request sink syntax variants', () => {
     expectMatches('VG-PY-014', 'os.rmdir(request.values["directory"])');
     expectNoMatch('VG-PY-014', 'os.rmdir(validated_directory)');
   });
+
+  it('covers Python form and request-header response values', () => {
+    expectMatches('VG-PY-015', 'response.headers["X-Name"] = request.form.get("name")');
+    expectMatches('VG-PY-015', 'response["X-Forwarded"] = request.headers["X-Forwarded"]');
+    expectNoMatch('VG-PY-015', 'response["Location"] = validated_location');
+  });
 });
