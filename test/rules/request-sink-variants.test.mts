@@ -55,4 +55,10 @@ describe('request sink syntax variants', () => {
     expectMatches('VG-NODE-016', "new RegExp(request.query['filter'])");
     expectNoMatch('VG-NODE-016', 'new RegExp(escapedPattern)');
   });
+
+  it('covers synchronous process execution request inputs', () => {
+    expectMatches('VG-NODE-017', 'child_process.spawnSync(req.query.binary, args)');
+    expectMatches('VG-NODE-017', "execFileSync(request.params['tool'], args)");
+    expectNoMatch('VG-NODE-017', 'execFileSync(approvedTool, validatedArgs)');
+  });
 });
