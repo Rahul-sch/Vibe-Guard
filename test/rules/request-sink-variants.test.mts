@@ -19,4 +19,10 @@ describe('request sink syntax variants', () => {
     expectMatches('VG-NODE-010', "rmSync(request.body['path'], { recursive: true })");
     expectNoMatch('VG-NODE-010', 'fs.rename(validatedSource, safeTarget, callback)');
   });
+
+  it('covers Express header aliases and incoming header values', () => {
+    expectMatches('VG-NODE-011', "res.header('X-User', req.headers['x-user'])");
+    expectMatches('VG-NODE-011', "res.set('Location', request.query.next)");
+    expectNoMatch('VG-NODE-011', "res.set('Cache-Control', 'no-store')");
+  });
 });
