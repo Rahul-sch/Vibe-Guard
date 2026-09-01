@@ -85,4 +85,10 @@ describe('request sink syntax variants', () => {
     expectMatches('VG-PY-017', 're.compile(request.form["pattern"])');
     expectNoMatch('VG-PY-017', 're.compile(re.escape(user_input))');
   });
+
+  it('covers Python subprocess helper request inputs', () => {
+    expectMatches('VG-PY-018', 'subprocess.check_output(request.GET.get("command"))');
+    expectMatches('VG-PY-018', 'subprocess.call(request.form["executable"])');
+    expectNoMatch('VG-PY-018', 'subprocess.check_output([approved_binary, argument])');
+  });
 });
