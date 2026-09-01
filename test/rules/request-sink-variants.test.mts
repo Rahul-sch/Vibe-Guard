@@ -7,4 +7,10 @@ describe('request sink syntax variants', () => {
     expectMatches('VG-NODE-008', 'accounts.findOneAndUpdate(request.params.selector, update)');
     expectNoMatch('VG-NODE-008', 'accounts.updateMany(validatedFilter, update)');
   });
+
+  it('covers dynamic imports from params and bracket-property inputs', () => {
+    expectMatches('VG-NODE-009', 'import(req.params.moduleName)');
+    expectMatches('VG-NODE-009', "require(request.body['adapter'])");
+    expectNoMatch('VG-NODE-009', "import('./adapters/safe.js')");
+  });
 });
