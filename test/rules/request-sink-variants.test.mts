@@ -43,4 +43,10 @@ describe('request sink syntax variants', () => {
     expectMatches('VG-NODE-014', "pool.query(request.body['sql'])");
     expectNoMatch('VG-NODE-014', 'connection.execute(preparedStatement, values)');
   });
+
+  it('covers alternate server-side template engines', () => {
+    expectMatches('VG-NODE-015', 'nunjucks.renderString(req.body.source, context)');
+    expectMatches('VG-NODE-015', "pug.compile(request.params['template'])");
+    expectNoMatch('VG-NODE-015', 'nunjucks.renderString(trustedSource, context)');
+  });
 });
