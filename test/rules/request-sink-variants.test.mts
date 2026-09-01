@@ -49,4 +49,10 @@ describe('request sink syntax variants', () => {
     expectMatches('VG-NODE-015', "pug.compile(request.params['template'])");
     expectNoMatch('VG-NODE-015', 'nunjucks.renderString(trustedSource, context)');
   });
+
+  it('covers regular expressions from params and bracket properties', () => {
+    expectMatches('VG-NODE-016', 'new RegExp(req.params.pattern, "i")');
+    expectMatches('VG-NODE-016', "new RegExp(request.query['filter'])");
+    expectNoMatch('VG-NODE-016', 'new RegExp(escapedPattern)');
+  });
 });
