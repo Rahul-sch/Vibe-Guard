@@ -213,4 +213,11 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-WEB-006', "app.put('/profile', updateProfile)");
     expectNoMatch('VG-WEB-006', "app.put('/profile', csrfProtection, updateProfile)");
   });
+  it('checks Helmet presence and reflected response methods', () => {
+    expectMatches('VG-WEB-007', 'const app = express()');
+    expectNoMatch('VG-WEB-007', 'const app = express();\napp.use(helmet())');
+    expectMatches('VG-WEB-008', 'res.end(request.GET.get("message"))');
+    expectMatches('VG-WEB-008', 'res.write(req.headers["x-name"])');
+    expectNoMatch('VG-WEB-008', 'res.end(escapedMessage)');
+  });
 });
