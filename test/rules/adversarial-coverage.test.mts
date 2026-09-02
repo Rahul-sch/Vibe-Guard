@@ -207,4 +207,10 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-WEB-004', 'const html = `<p>${request.POST.name}</p>`');
     expectNoMatch('VG-WEB-004', 'const html = `<p>${escapedName}</p>`');
   });
+  it('checks DOM assignment and CSRF middleware boundaries', () => {
+    expectMatches('VG-WEB-005', 'panel.innerHTML = state.preview');
+    expectNoMatch('VG-WEB-005', 'panel.textContent = state.preview');
+    expectMatches('VG-WEB-006', "app.put('/profile', updateProfile)");
+    expectNoMatch('VG-WEB-006', "app.put('/profile', csrfProtection, updateProfile)");
+  });
 });

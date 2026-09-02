@@ -87,7 +87,7 @@ export const webRules: DetectionRule[] = [
     severity: 'warning',
     languages: ['node', 'typescript'],
     filePatterns: ['**/*.js', '**/*.ts'],
-    pattern: /app\.(post|put|delete)\([^)]*(?!.*csrf)(?!.*xsrf)/gi,
+    pattern: /app\.(post|put|delete)\s*\((?![^)]*\b(?:csrf|xsrf)\w*)[^)]*\)/gi,
     confidence: 'low',
     message: 'POST/PUT/DELETE endpoint may lack CSRF protection',
     remediation: 'Implement CSRF tokens or SameSite cookies',
