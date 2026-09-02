@@ -182,4 +182,10 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-CRYPTO-003', 'const value = Math.random() + "-token"');
     expectNoMatch('VG-CRYPTO-003', 'const token = crypto.randomBytes(32)');
   });
+  it('checks hardcoded key, salt, and IV length boundaries', () => {
+    expectMatches('VG-CRYPTO-004', `encrypt-key = '${'k'.repeat(16)}'`);
+    expectNoMatch('VG-CRYPTO-004', `encrypt-key = '${'k'.repeat(15)}'`);
+    expectMatches('VG-CRYPTO-005', "initialization_vector = '12345678'");
+    expectNoMatch('VG-CRYPTO-005', "initialization_vector = '1234567'");
+  });
 });
