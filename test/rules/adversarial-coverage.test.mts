@@ -254,4 +254,12 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-GEN-003', 'chmod 666 generated.txt');
     expectNoMatch('VG-GEN-003', 'chmod 600 generated.txt');
   });
+  it('checks credential comments, database hosts, and security notes', () => {
+    expectMatches('VG-GEN-004', '// auth_token = legacyToken');
+    expectNoMatch('VG-GEN-004', '// rotate credentials through the vault');
+    expectMatches('VG-GEN-005', "hostname = 'primary.rds.amazonaws.com'");
+    expectNoMatch('VG-GEN-005', 'hostname = process.env.DB_HOST');
+    expectMatches('VG-GEN-006', '// FIXME tighten auth permissions');
+    expectNoMatch('VG-GEN-006', '// FIXME improve startup performance');
+  });
 });
