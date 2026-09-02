@@ -136,4 +136,12 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-NODE-014', 'database.execute( request.query.statement )');
     expectNoMatch('VG-NODE-014', 'database.execute(PREPARED_QUERY, values)');
   });
+  it('checks Node template, regex, and executable selection variants', () => {
+    expectMatches('VG-NODE-015', 'Handlebars.compile( request.body.source )');
+    expectNoMatch('VG-NODE-015', 'Handlebars.compile(TRUSTED_SOURCE)');
+    expectMatches('VG-NODE-016', 'new RegExp ( request.params.filter )');
+    expectNoMatch('VG-NODE-016', 'new RegExp(escapedFilter)');
+    expectMatches('VG-NODE-017', 'child_process.execFileSync( request.query.tool, args )');
+    expectNoMatch('VG-NODE-017', 'child_process.execFileSync(APPROVED_TOOL, args)');
+  });
 });
