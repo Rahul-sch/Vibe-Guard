@@ -122,4 +122,10 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-NODE-009', 'import ( request.params.plugin )');
     expectNoMatch('VG-NODE-009', 'import(plugins[approvedName])');
   });
+  it('checks Node write-path and response-header request variants', () => {
+    expectMatches('VG-NODE-010', 'createWriteStream( request.body.output )');
+    expectNoMatch('VG-NODE-010', 'createWriteStream(serverGeneratedPath)');
+    expectMatches('VG-NODE-011', "setHeader( 'X-Trace', request.headers['x-trace'] )");
+    expectNoMatch('VG-NODE-011', "setHeader('X-Trace', validatedTrace)");
+  });
 });
