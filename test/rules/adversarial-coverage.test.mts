@@ -188,4 +188,11 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-CRYPTO-005', "initialization_vector = '12345678'");
     expectNoMatch('VG-CRYPTO-005', "initialization_vector = '1234567'");
   });
+  it('checks ECB algorithms and exact weak key sizes', () => {
+    expectMatches('VG-CRYPTO-006', "mode = 'DES-ECB'");
+    expectNoMatch('VG-CRYPTO-006', "mode = 'AES-GCM'");
+    expectMatches('VG-CRYPTO-007', 'key_size = 512');
+    expectMatches('VG-CRYPTO-007', 'modulusLength: 1024');
+    expectNoMatch('VG-CRYPTO-007', 'modulusLength: 4096');
+  });
 });
