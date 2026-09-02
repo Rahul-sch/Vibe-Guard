@@ -11,4 +11,10 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-SEC-003', "auth_token = 'Abcdefgh12345678'");
     expectNoMatch('VG-SEC-003', "auth_token = 'changeme'");
   });
+  it('distinguishes secret logging and response exposure from safe fields', () => {
+    expectMatches('VG-SEC-004', 'print(api_key)');
+    expectNoMatch('VG-SEC-004', 'print(request_id)');
+    expectMatches('VG-SEC-005', 'return { private_key: keyMaterial }');
+    expectNoMatch('VG-SEC-005', 'return { public_key: publicKey }');
+  });
 });
