@@ -110,4 +110,10 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-NODE-005', "process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'");
     expectNoMatch('VG-NODE-005', "process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1'");
   });
+  it('checks Node file-read and outbound-request method variants', () => {
+    expectMatches('VG-NODE-006', "createReadStream( request.params['asset'] )");
+    expectNoMatch('VG-NODE-006', 'createReadStream(approvedAsset)');
+    expectMatches('VG-NODE-007', 'axios.request( request.body.endpoint )');
+    expectNoMatch('VG-NODE-007', 'axios.request(serviceEndpoint)');
+  });
 });
