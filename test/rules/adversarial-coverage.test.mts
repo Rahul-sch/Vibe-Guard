@@ -88,4 +88,12 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-PY-015', 'response.headers ["Location"] = request.values.get("next")');
     expectNoMatch('VG-PY-015', 'response.headers["Location"] = safe_location');
   });
+  it('checks Python import, regex, and subprocess syntax variants', () => {
+    expectMatches('VG-PY-016', '__import__ ( request.GET.get("module") )');
+    expectNoMatch('VG-PY-016', '__import__(approved_module)');
+    expectMatches('VG-PY-017', 're.compile ( request.values.get("regex") )');
+    expectNoMatch('VG-PY-017', 're.compile(re.escape(term))');
+    expectMatches('VG-PY-018', 'subprocess.check_call( request.POST.get("command") )');
+    expectNoMatch('VG-PY-018', 'subprocess.check_call([APPROVED_COMMAND])');
+  });
 });
