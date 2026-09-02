@@ -166,4 +166,12 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-CFG-002', '"Principal" : "*"');
     expectNoMatch('VG-CFG-002', '"Principal": { "AWS": roleArn }');
   });
+  it('checks dependency-confusion prefixes without flagging neighbors', () => {
+    expectMatches('VG-DEP-001', 'from enterprise_auth import login');
+    expectMatches('VG-DEP-001', 'import langchainplus');
+    expectNoMatch('VG-DEP-001', 'import enterprise');
+    expectMatches('VG-DEP-002', "require('@enterprise/private-sdk')");
+    expectMatches('VG-DEP-002', "import 'react-native-toolkit'");
+    expectNoMatch('VG-DEP-002', "import '@enterprises/public-sdk'");
+  });
 });
