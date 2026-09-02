@@ -233,4 +233,8 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-CLOUD-004', 'encrypted = False');
     expectNoMatch('VG-CLOUD-004', 'encrypted = true');
   });
+  it('checks multiline RDS encryption configuration', () => {
+    expectMatches('VG-CLOUD-005', 'resource "aws_db_instance" "db" {\n  engine = "postgres"\n}');
+    expectNoMatch('VG-CLOUD-005', 'resource "aws_db_instance" "db" {\n  storage_encrypted = true\n}');
+  });
 });
