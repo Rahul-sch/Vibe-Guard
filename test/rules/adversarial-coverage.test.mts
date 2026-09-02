@@ -237,4 +237,8 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-CLOUD-005', 'resource "aws_db_instance" "db" {\n  engine = "postgres"\n}');
     expectNoMatch('VG-CLOUD-005', 'resource "aws_db_instance" "db" {\n  storage_encrypted = true\n}');
   });
+  it('checks customer-managed KMS configuration boundaries', () => {
+    expectMatches('VG-CLOUD-006', 'resource "aws_ebs_volume" "data" {\n  size = 100\n}');
+    expectNoMatch('VG-CLOUD-006', 'resource "aws_ebs_volume" "data" {\n  kms_key_id = aws_kms_key.data.arn\n}');
+  });
 });
