@@ -74,4 +74,12 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-PY-010', 'Environment().from_string(request.POST.get("template"))');
     expectNoMatch('VG-PY-010', 'Environment().from_string(TRUSTED_TEMPLATE)');
   });
+  it('checks Python evaluation, redirect, and archive variants', () => {
+    expectMatches('VG-PY-011', 'compile(request.form["code"], "input", "exec")');
+    expectNoMatch('VG-PY-011', 'compile(trusted_code, "input", "exec")');
+    expectMatches('VG-PY-012', 'HttpResponsePermanentRedirect(request.POST.get("next"))');
+    expectNoMatch('VG-PY-012', 'HttpResponsePermanentRedirect("/home")');
+    expectMatches('VG-PY-013', 'bundle.extractall(path = request.values["target"])');
+    expectNoMatch('VG-PY-013', 'bundle.extractall(path=SAFE_DIR)');
+  });
 });
