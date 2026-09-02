@@ -195,4 +195,10 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-CRYPTO-007', 'modulusLength: 1024');
     expectNoMatch('VG-CRYPTO-007', 'modulusLength: 4096');
   });
+  it('checks raw CORS headers and complete cookie protections', () => {
+    expectMatches('VG-WEB-001', "'Access-Control-Allow-Origin': '*'");
+    expectNoMatch('VG-WEB-001', "'Access-Control-Allow-Origin': 'https://app.example.com'");
+    expectMatches('VG-WEB-002', "setHeader('Set-Cookie', 'sid=value; SameSite=Lax')");
+    expectNoMatch('VG-WEB-002', "setHeader('Set-Cookie', 'sid=value; Secure; HttpOnly')");
+  });
 });
