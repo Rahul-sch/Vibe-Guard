@@ -96,4 +96,12 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-PY-018', 'subprocess.check_call( request.POST.get("command") )');
     expectNoMatch('VG-PY-018', 'subprocess.check_call([APPROVED_COMMAND])');
   });
+  it('checks Node shell, spawn, and React HTML syntax variants', () => {
+    expectMatches('VG-NODE-001', 'child_process.execSync(command)');
+    expectNoMatch('VG-NODE-001', 'child_process.execFileSync(binary, args)');
+    expectMatches('VG-NODE-002', 'spawn("tool", args, { cwd, shell: true })');
+    expectNoMatch('VG-NODE-002', 'spawn("tool", args, { shell: false })');
+    expectMatches('VG-NODE-003', '<div dangerouslySetInnerHTML = { { __html: content } } />');
+    expectNoMatch('VG-NODE-003', '<div>{content}</div>');
+  });
 });
