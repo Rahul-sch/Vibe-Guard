@@ -104,4 +104,10 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-NODE-003', '<div dangerouslySetInnerHTML = { { __html: content } } />');
     expectNoMatch('VG-NODE-003', '<div>{content}</div>');
   });
+  it('checks Node local and global TLS bypass variants', () => {
+    expectMatches('VG-NODE-004', 'const options = { rejectUnauthorized : false }');
+    expectNoMatch('VG-NODE-004', 'const options = { rejectUnauthorized: true }');
+    expectMatches('VG-NODE-005', "process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'");
+    expectNoMatch('VG-NODE-005', "process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1'");
+  });
 });
