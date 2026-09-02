@@ -174,4 +174,12 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-DEP-002', "import 'react-native-toolkit'");
     expectNoMatch('VG-DEP-002', "import '@enterprises/public-sdk'");
   });
+  it('checks weak hash names and random-token data flow', () => {
+    expectMatches('VG-CRYPTO-001', 'MD5 (payload)');
+    expectNoMatch('VG-CRYPTO-001', 'hmacMd5CompatibilityLabel');
+    expectMatches('VG-CRYPTO-002', 'sha1 (payload)');
+    expectNoMatch('VG-CRYPTO-002', 'sha1DigestLabel');
+    expectMatches('VG-CRYPTO-003', 'const value = Math.random() + "-token"');
+    expectNoMatch('VG-CRYPTO-003', 'const token = crypto.randomBytes(32)');
+  });
 });
