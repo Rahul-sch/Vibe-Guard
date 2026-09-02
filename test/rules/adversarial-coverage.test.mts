@@ -54,4 +54,12 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-PY-003', 'yaml.load(payload)');
     expectNoMatch('VG-PY-003', 'yaml.load(payload, Loader=yaml.SafeLoader)');
   });
+  it('checks pickle, Flask debug, and TLS verification variants', () => {
+    expectMatches('VG-PY-004', 'pickle.load(stream)');
+    expectNoMatch('VG-PY-004', 'json.load(stream)');
+    expectMatches('VG-PY-005', 'app.run(host="localhost", debug = True)');
+    expectNoMatch('VG-PY-005', 'app.run(debug=False)');
+    expectMatches('VG-PY-006', 'requests.patch(url, timeout=3, verify = False)');
+    expectNoMatch('VG-PY-006', 'requests.patch(url, verify=True)');
+  });
 });
