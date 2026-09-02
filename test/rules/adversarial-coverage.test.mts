@@ -262,4 +262,16 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-GEN-006', '// FIXME tighten auth permissions');
     expectNoMatch('VG-GEN-006', '// FIXME improve startup performance');
   });
+
+  it('enforces security metadata quality across the complete catalog', () => {
+    expect(allRules).toHaveLength(88);
+    for (const rule of allRules) {
+      expect(rule.id).toMatch(/^VG-[A-Z0-9]+-\d{3}$/);
+      expect(rule.remediation, `${rule.id} needs remediation guidance`).toBeTruthy();
+      expect(rule.cwe, `${rule.id} needs a CWE mapping`).toMatch(/^CWE-\d+$/);
+      expect(['critical', 'warning', 'info']).toContain(rule.severity);
+      expect(['high', 'medium', 'low']).toContain(rule.confidence);
+      expect(rule.pattern.source, `${rule.id} needs a matcher`).not.toBe('(?:)');
+    }
+  });
 });
