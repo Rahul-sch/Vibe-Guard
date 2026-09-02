@@ -144,4 +144,12 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-NODE-017', 'child_process.execFileSync( request.query.tool, args )');
     expectNoMatch('VG-NODE-017', 'child_process.execFileSync(APPROVED_TOOL, args)');
   });
+  it('checks Docker file-scope and privilege boundaries', () => {
+    expectMatches('VG-DOCK-001', 'FROM alpine:3.20\nRUN adduser app');
+    expectNoMatch('VG-DOCK-001', 'FROM alpine:3.20\nUSER app');
+    expectMatches('VG-DOCK-002', '/var/run/docker.sock:/run/host.sock:ro');
+    expectNoMatch('VG-DOCK-002', '/run/containerd/containerd.sock:/run/service.sock');
+    expectMatches('VG-DOCK-003', 'docker run --privileged image');
+    expectNoMatch('VG-DOCK-003', 'privileged: false');
+  });
 });
