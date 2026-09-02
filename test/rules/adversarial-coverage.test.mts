@@ -201,4 +201,10 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-WEB-002', "setHeader('Set-Cookie', 'sid=value; SameSite=Lax')");
     expectNoMatch('VG-WEB-002', "setHeader('Set-Cookie', 'sid=value; Secure; HttpOnly')");
   });
+  it('checks assignment redirects and request templates', () => {
+    expectMatches('VG-WEB-003', 'location = req.params.next');
+    expectNoMatch('VG-WEB-003', 'location = approvedLocation');
+    expectMatches('VG-WEB-004', 'const html = `<p>${request.POST.name}</p>`');
+    expectNoMatch('VG-WEB-004', 'const html = `<p>${escapedName}</p>`');
+  });
 });
