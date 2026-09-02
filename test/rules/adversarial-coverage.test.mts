@@ -241,4 +241,10 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-CLOUD-006', 'resource "aws_ebs_volume" "data" {\n  size = 100\n}');
     expectNoMatch('VG-CLOUD-006', 'resource "aws_ebs_volume" "data" {\n  kms_key_id = aws_kms_key.data.arn\n}');
   });
+  it('checks Azure public access and hardcoded IP address boundaries', () => {
+    expectMatches('VG-CLOUD-007', 'allow_blob_public_access = TRUE');
+    expectNoMatch('VG-CLOUD-007', 'allow_blob_public_access = false');
+    expectMatches('VG-GEN-001', "endpoint = '255.255.255.255'");
+    expectNoMatch('VG-GEN-001', "endpoint = '999.999.999.999'");
+  });
 });
