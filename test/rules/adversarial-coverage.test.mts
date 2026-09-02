@@ -226,4 +226,11 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-CLOUD-002', '"Action" : "*"');
     expectNoMatch('VG-CLOUD-002', '"Resource": "*"');
   });
+  it('checks cloud CIDR forms and encryption boolean variants', () => {
+    expectMatches('VG-CLOUD-003', "CidrIp: ['0.0.0.0/0']");
+    expectNoMatch('VG-CLOUD-003', "CidrIp: ['10.20.0.0/16']");
+    expectMatches('VG-CLOUD-004', 'encryption: no');
+    expectMatches('VG-CLOUD-004', 'encrypted = False');
+    expectNoMatch('VG-CLOUD-004', 'encrypted = true');
+  });
 });
