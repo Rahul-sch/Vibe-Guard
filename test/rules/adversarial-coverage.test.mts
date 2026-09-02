@@ -247,4 +247,11 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-GEN-001', "endpoint = '255.255.255.255'");
     expectNoMatch('VG-GEN-001', "endpoint = '999.999.999.999'");
   });
+  it('checks environment debug modes and excessive permissions', () => {
+    expectMatches('VG-GEN-002', 'NODE_ENV=development');
+    expectMatches('VG-GEN-002', 'FLASK_DEBUG: 1');
+    expectNoMatch('VG-GEN-002', 'NODE_ENV=production');
+    expectMatches('VG-GEN-003', 'chmod 666 generated.txt');
+    expectNoMatch('VG-GEN-003', 'chmod 600 generated.txt');
+  });
 });
