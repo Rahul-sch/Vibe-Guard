@@ -160,4 +160,10 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-K8S-003', 'securityContext:\n  readOnlyRootFilesystem: true');
     expectNoMatch('VG-K8S-003', 'securityContext:\n  runAsNonRoot: true');
   });
+  it('checks exposed listeners and public bucket policy variants', () => {
+    expectMatches('VG-CFG-001', 'host: "0.0.0.0"');
+    expectNoMatch('VG-CFG-001', 'host: "127.0.0.1"');
+    expectMatches('VG-CFG-002', '"Principal" : "*"');
+    expectNoMatch('VG-CFG-002', '"Principal": { "AWS": roleArn }');
+  });
 });
