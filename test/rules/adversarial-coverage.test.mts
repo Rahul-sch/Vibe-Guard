@@ -116,4 +116,10 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-NODE-007', 'axios.request( request.body.endpoint )');
     expectNoMatch('VG-NODE-007', 'axios.request(serviceEndpoint)');
   });
+  it('checks Node database and module-loading request variants', () => {
+    expectMatches('VG-NODE-008', 'records.deleteMany( request.query )');
+    expectNoMatch('VG-NODE-008', 'records.deleteMany(authorizedFilter)');
+    expectMatches('VG-NODE-009', 'import ( request.params.plugin )');
+    expectNoMatch('VG-NODE-009', 'import(plugins[approvedName])');
+  });
 });
