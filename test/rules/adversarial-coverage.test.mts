@@ -152,4 +152,12 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-DOCK-003', 'docker run --privileged image');
     expectNoMatch('VG-DOCK-003', 'privileged: false');
   });
+  it('checks Kubernetes RBAC, IPv6, and pod-context boundaries', () => {
+    expectMatches('VG-K8S-001', 'roleRef:\n  name: clusteradmin');
+    expectNoMatch('VG-K8S-001', 'roleRef:\n  name: namespace-admin');
+    expectMatches('VG-K8S-002', 'ipBlock:\n  cidr: ::/0');
+    expectNoMatch('VG-K8S-002', 'ipBlock:\n  cidr: 2001:db8::/32');
+    expectMatches('VG-K8S-003', 'securityContext:\n  readOnlyRootFilesystem: true');
+    expectNoMatch('VG-K8S-003', 'securityContext:\n  runAsNonRoot: true');
+  });
 });
