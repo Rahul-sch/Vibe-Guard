@@ -220,4 +220,10 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-WEB-008', 'res.write(req.headers["x-name"])');
     expectNoMatch('VG-WEB-008', 'res.end(escapedMessage)');
   });
+  it('checks cloud ACL casing and exact IAM wildcard actions', () => {
+    expectMatches('VG-CLOUD-001', "acl = 'public-read'");
+    expectNoMatch('VG-CLOUD-001', "acl = 'authenticated-read'");
+    expectMatches('VG-CLOUD-002', '"Action" : "*"');
+    expectNoMatch('VG-CLOUD-002', '"Resource": "*"');
+  });
 });
