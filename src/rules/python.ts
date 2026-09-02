@@ -39,7 +39,10 @@ export const pythonRules: DetectionRule[] = [
     languages: ['python'],
     filePatterns: ['*.py'],
     pattern: /yaml\.load\s*\([^)]*(?!Loader\s*=\s*yaml\.SafeLoader)/g,
-    allowPatterns: [/yaml\.safe_load/],
+    allowPatterns: [
+      /yaml\.safe_load/,
+      /Loader\s*=\s*yaml\.SafeLoader/,
+    ],
     message: 'yaml.load() without SafeLoader can execute arbitrary Python objects.',
     remediation: 'Use yaml.safe_load() or yaml.load(data, Loader=yaml.SafeLoader).',
     confidence: 'high',

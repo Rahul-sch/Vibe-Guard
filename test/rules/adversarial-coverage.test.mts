@@ -46,4 +46,12 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-SEC-015', `api-key = '${'D'.repeat(20)}'`);
     expectNoMatch('VG-SEC-015', `api-key = '${'D'.repeat(19)}'`);
   });
+  it('checks Python shell execution and safe YAML loader boundaries', () => {
+    expectMatches('VG-PY-001', 'subprocess.check_output(cmd, shell = True)');
+    expectNoMatch('VG-PY-001', 'subprocess.check_output(args, shell = False)');
+    expectMatches('VG-PY-002', 'os.system (command)');
+    expectNoMatch('VG-PY-002', 'os.path.exists(command)');
+    expectMatches('VG-PY-003', 'yaml.load(payload)');
+    expectNoMatch('VG-PY-003', 'yaml.load(payload, Loader=yaml.SafeLoader)');
+  });
 });
