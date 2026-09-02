@@ -68,4 +68,10 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-PY-008', 'httpx.request(request.form.get("url"))');
     expectNoMatch('VG-PY-008', 'httpx.request(settings.API_URL)');
   });
+  it('checks Python SQL and Jinja request-source variants', () => {
+    expectMatches('VG-PY-009', 'cursor.executemany( request.values.get("query") )');
+    expectNoMatch('VG-PY-009', 'cursor.executemany(statement, rows)');
+    expectMatches('VG-PY-010', 'Environment().from_string(request.POST.get("template"))');
+    expectNoMatch('VG-PY-010', 'Environment().from_string(TRUSTED_TEMPLATE)');
+  });
 });
