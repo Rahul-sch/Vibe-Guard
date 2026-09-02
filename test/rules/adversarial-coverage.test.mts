@@ -25,4 +25,11 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-SEC-008', '"type" : "service_account"');
     expectNoMatch('VG-SEC-008', '"type" : "authorized_user"');
   });
+  it('checks Azure key length and supported private key headers', () => {
+    expectMatches('VG-SEC-009', `AccountKey=${'A'.repeat(88)}==`);
+    expectNoMatch('VG-SEC-009', `AccountKey=${'A'.repeat(87)}==`);
+    expectMatches('VG-SEC-010', '-----BEGIN OPENSSH PRIVATE KEY-----');
+    expectMatches('VG-SEC-010', '-----BEGIN EC PRIVATE KEY-----');
+    expectNoMatch('VG-SEC-010', '-----BEGIN CERTIFICATE-----');
+  });
 });
