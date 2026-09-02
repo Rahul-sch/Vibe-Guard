@@ -17,4 +17,12 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-SEC-005', 'return { private_key: keyMaterial }');
     expectNoMatch('VG-SEC-005', 'return { public_key: publicKey }');
   });
+  it('checks cloud credential lengths and GCP account types', () => {
+    expectMatches('VG-SEC-006', 'AKIAABCDEFGHIJKLMNOP');
+    expectNoMatch('VG-SEC-006', 'ASIAABCDEFGHIJKLMNOP');
+    expectMatches('VG-SEC-007', `AWS_SECRET_ACCESS_KEY = '${'z'.repeat(40)}'`);
+    expectNoMatch('VG-SEC-007', `AWS_SECRET_ACCESS_KEY = '${'z'.repeat(39)}'`);
+    expectMatches('VG-SEC-008', '"type" : "service_account"');
+    expectNoMatch('VG-SEC-008', '"type" : "authorized_user"');
+  });
 });
