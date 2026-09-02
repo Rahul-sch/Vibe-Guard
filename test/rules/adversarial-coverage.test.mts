@@ -32,4 +32,12 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-SEC-010', '-----BEGIN EC PRIVATE KEY-----');
     expectNoMatch('VG-SEC-010', '-----BEGIN CERTIFICATE-----');
   });
+  it('checks service-token prefixes and minimum lengths', () => {
+    expectMatches('VG-SEC-011', `pk_test_${'B'.repeat(24)}`);
+    expectNoMatch('VG-SEC-011', `pk_test_${'B'.repeat(23)}`);
+    expectMatches('VG-SEC-012', `gho_${'c'.repeat(36)}`);
+    expectNoMatch('VG-SEC-012', `glpat-${'c'.repeat(36)}`);
+    expectMatches('VG-SEC-013', `https://hooks.slack.com/services/${'A'.repeat(9)}/${'B'.repeat(9)}/${'c'.repeat(24)}`);
+    expectNoMatch('VG-SEC-013', 'https://hooks.slack.com/workflows/example');
+  });
 });
