@@ -82,4 +82,10 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-PY-013', 'bundle.extractall(path = request.values["target"])');
     expectNoMatch('VG-PY-013', 'bundle.extractall(path=SAFE_DIR)');
   });
+  it('checks Python mutation and response-header syntax variants', () => {
+    expectMatches('VG-PY-014', 'shutil.rmtree( request.GET.get("directory") )');
+    expectNoMatch('VG-PY-014', 'shutil.rmtree(verified_directory)');
+    expectMatches('VG-PY-015', 'response.headers ["Location"] = request.values.get("next")');
+    expectNoMatch('VG-PY-015', 'response.headers["Location"] = safe_location');
+  });
 });
