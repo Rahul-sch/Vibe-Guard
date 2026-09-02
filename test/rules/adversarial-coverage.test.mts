@@ -62,4 +62,10 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-PY-006', 'requests.patch(url, timeout=3, verify = False)');
     expectNoMatch('VG-PY-006', 'requests.patch(url, verify=True)');
   });
+  it('checks Python file and outbound URL request-source variants', () => {
+    expectMatches('VG-PY-007', 'Path( request.values["filename"] )');
+    expectNoMatch('VG-PY-007', 'Path(settings.UPLOAD_ROOT)');
+    expectMatches('VG-PY-008', 'httpx.request(request.form.get("url"))');
+    expectNoMatch('VG-PY-008', 'httpx.request(settings.API_URL)');
+  });
 });
