@@ -128,4 +128,12 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-NODE-011', "setHeader( 'X-Trace', request.headers['x-trace'] )");
     expectNoMatch('VG-NODE-011', "setHeader('X-Trace', validatedTrace)");
   });
+  it('checks Node static-root, redirect, and SQL boundaries', () => {
+    expectMatches('VG-NODE-012', "express.static( '/' )");
+    expectNoMatch('VG-NODE-012', "express.static('/srv/public')");
+    expectMatches('VG-NODE-013', 'redirect ( request.params.returnTo )');
+    expectNoMatch('VG-NODE-013', 'redirect(approvedReturnTo)');
+    expectMatches('VG-NODE-014', 'database.execute( request.query.statement )');
+    expectNoMatch('VG-NODE-014', 'database.execute(PREPARED_QUERY, values)');
+  });
 });
