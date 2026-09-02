@@ -40,4 +40,10 @@ describe('adversarial rule coverage', () => {
     expectMatches('VG-SEC-013', `https://hooks.slack.com/services/${'A'.repeat(9)}/${'B'.repeat(9)}/${'c'.repeat(24)}`);
     expectNoMatch('VG-SEC-013', 'https://hooks.slack.com/workflows/example');
   });
+  it('checks JWT and generic API-key naming variants', () => {
+    expectMatches('VG-SEC-014', "JWT-SECRET: '12345678'");
+    expectNoMatch('VG-SEC-014', "jwt_secret = '1234567'");
+    expectMatches('VG-SEC-015', `api-key = '${'D'.repeat(20)}'`);
+    expectNoMatch('VG-SEC-015', `api-key = '${'D'.repeat(19)}'`);
+  });
 });
