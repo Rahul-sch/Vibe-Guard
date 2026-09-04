@@ -65,4 +65,14 @@ describe('rule robustness matrix', () => {
       expectNoMatch('VG-NODE-017', `${sink}(approvedBinary)`);
     }
   });
+  it('covers Python subprocess shells and deserializer alternatives', () => {
+    for (const call of ['run', 'call', 'check_output', 'Popen']) {
+      expectMatches('VG-PY-001', `subprocess.${call}(command, shell=True)`);
+      expectNoMatch('VG-PY-001', `subprocess.${call}(args, shell=False)`);
+    }
+    expectMatches('VG-PY-003', 'yaml.load(document, Loader=yaml.FullLoader)');
+    expectNoMatch('VG-PY-003', 'yaml.load(document, Loader=yaml.SafeLoader)');
+    expectMatches('VG-PY-004', 'pickle.loads(blob)');
+    expectNoMatch('VG-PY-004', 'json.loads(blob)');
+  });
 });
