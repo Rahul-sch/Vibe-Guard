@@ -55,4 +55,14 @@ describe('rule robustness matrix', () => {
     expectMatches('VG-NODE-012', "express.static(\"/*\")");
     expectNoMatch('VG-NODE-012', "express.static(\"./public\")");
   });
+  it('covers template engines and process-execution variants', () => {
+    for (const engine of ['ejs.compile', 'pug.compile', 'Handlebars.compile', 'nunjucks.renderString']) {
+      expectMatches('VG-NODE-015', `${engine}(req.body.template)`);
+      expectNoMatch('VG-NODE-015', `${engine}(trustedTemplate)`);
+    }
+    for (const sink of ['spawn', 'spawnSync', 'execFile', 'execFileSync']) {
+      expectMatches('VG-NODE-017', `${sink}(request.params.binary)`);
+      expectNoMatch('VG-NODE-017', `${sink}(approvedBinary)`);
+    }
+  });
 });
