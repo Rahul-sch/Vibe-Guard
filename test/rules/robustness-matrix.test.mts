@@ -75,4 +75,14 @@ describe('rule robustness matrix', () => {
     expectMatches('VG-PY-004', 'pickle.loads(blob)');
     expectNoMatch('VG-PY-004', 'json.loads(blob)');
   });
+  it('covers Python file and HTTP client method families', () => {
+    for (const sink of ['open', 'send_file', 'Path']) {
+      expectMatches('VG-PY-007', `${sink}(request.args.get("path"))`);
+      expectNoMatch('VG-PY-007', `${sink}(validated_path)`);
+    }
+    for (const sink of ['requests.get', 'requests.post', 'requests.put', 'requests.patch', 'requests.delete', 'requests.head', 'httpx.request']) {
+      expectMatches('VG-PY-008', `${sink}(request.values.get("url"))`);
+      expectNoMatch('VG-PY-008', `${sink}(configured_url)`);
+    }
+  });
 });
