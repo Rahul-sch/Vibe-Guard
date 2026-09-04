@@ -32,4 +32,10 @@ describe('rule robustness matrix', () => {
       expectNoMatch('VG-NODE-006', `${sink}(validatedPath)`);
     }
   });
+  it('covers outbound HTTP clients and safe configured URLs', () => {
+    for (const sink of ['fetch', 'got', 'http.get', 'https.request', 'undici.request', 'axios.patch']) {
+      expectMatches('VG-NODE-007', `${sink}(request.query.url)`);
+      expectNoMatch('VG-NODE-007', `${sink}(serviceUrl)`);
+    }
+  });
 });
