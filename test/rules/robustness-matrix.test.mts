@@ -38,4 +38,13 @@ describe('rule robustness matrix', () => {
       expectNoMatch('VG-NODE-007', `${sink}(serviceUrl)`);
     }
   });
+  it('covers MongoDB and file-mutation method families', () => {
+    for (const method of ['find', 'findOne', 'deleteOne', 'deleteMany', 'updateOne', 'updateMany', 'findOneAndUpdate']) {
+      expectMatches('VG-NODE-008', `collection.${method}(req.query)`);
+    }
+    for (const sink of ['writeFile', 'writeFileSync', 'createWriteStream', 'unlink', 'unlinkSync', 'rm', 'rmSync', 'rename', 'renameSync']) {
+      expectMatches('VG-NODE-010', `${sink}(request.body.path)`);
+      expectNoMatch('VG-NODE-010', `${sink}(validatedPath)`);
+    }
+  });
 });
