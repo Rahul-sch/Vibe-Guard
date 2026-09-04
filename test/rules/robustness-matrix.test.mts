@@ -47,4 +47,12 @@ describe('rule robustness matrix', () => {
       expectNoMatch('VG-NODE-010', `${sink}(validatedPath)`);
     }
   });
+  it('covers response-header aliases and static-root quote variants', () => {
+    for (const sink of ['setHeader', 'res.header', 'res.set', 'res.append']) {
+      expectMatches('VG-NODE-011', `${sink}('X-Value', req.headers.value)`);
+      expectNoMatch('VG-NODE-011', `${sink}('X-Value', safeValue)`);
+    }
+    expectMatches('VG-NODE-012', "express.static(\"/*\")");
+    expectNoMatch('VG-NODE-012', "express.static(\"./public\")");
+  });
 });
