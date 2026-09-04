@@ -139,4 +139,14 @@ describe('rule robustness matrix', () => {
     expectMatches('VG-DEP-002', "import 'huggingface-utils'");
     expectNoMatch('VG-DEP-002', "import 'huggingface_hub'");
   });
+  it('covers cryptography aliases, boundaries, and secure alternatives', () => {
+    expectMatches('VG-CRYPTO-001', 'md5(data)');
+    expectMatches('VG-CRYPTO-002', 'SHA1(data)');
+    expectMatches('VG-CRYPTO-003', 'const nonce = Math.random() + nonceSuffix');
+    expectMatches('VG-CRYPTO-004', `encryption_key = '${'x'.repeat(16)}'`);
+    expectMatches('VG-CRYPTO-005', "salt = '12345678'");
+    expectMatches('VG-CRYPTO-006', "algorithm = 'AES-ECB'");
+    expectMatches('VG-CRYPTO-007', 'keySize: 512');
+    expectNoMatch('VG-CRYPTO-007', 'keySize: 256');
+  });
 });
