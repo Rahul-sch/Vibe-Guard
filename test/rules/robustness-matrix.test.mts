@@ -85,4 +85,16 @@ describe('rule robustness matrix', () => {
       expectNoMatch('VG-PY-008', `${sink}(configured_url)`);
     }
   });
+  it('covers Python SQL, template, and code evaluation alternatives', () => {
+    expectMatches('VG-PY-009', 'cursor.execute(request.form.get("statement"))');
+    expectMatches('VG-PY-009', 'cursor.executemany(request.POST["statement"])');
+    for (const sink of ['render_template_string', 'jinja2.Template']) {
+      expectMatches('VG-PY-010', `${sink}(request.args.get("source"))`);
+      expectNoMatch('VG-PY-010', `${sink}(trusted_source)`);
+    }
+    for (const sink of ['eval', 'exec', 'compile']) {
+      expectMatches('VG-PY-011', `${sink}(request.values.get("code"))`);
+      expectNoMatch('VG-PY-011', `${sink}(trusted_code)`);
+    }
+  });
 });
