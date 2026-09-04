@@ -161,4 +161,14 @@ describe('rule robustness matrix', () => {
       expectNoMatch('VG-WEB-008', `res.${method}(escapedMessage)`);
     }
   });
+  it('covers cloud configuration key and value variants', () => {
+    expectMatches('VG-CLOUD-001', 'ACL: "public-read"');
+    expectMatches('VG-CLOUD-002', '"Action":"*"');
+    expectMatches('VG-CLOUD-003', 'cidr_blocks = ["0.0.0.0/0"]');
+    expectMatches('VG-CLOUD-004', 'ENCRYPTION = NO');
+    expectMatches('VG-CLOUD-005', 'aws_db_instance { engine = "mysql" }');
+    expectNoMatch('VG-CLOUD-005', 'aws_db_instance { storage_encrypted=true }');
+    expectMatches('VG-CLOUD-006', 'aws_s3_bucket { bucket = "uploads" }');
+    expectMatches('VG-CLOUD-007', 'ALLOW_BLOB_PUBLIC_ACCESS = TRUE');
+  });
 });
