@@ -171,4 +171,13 @@ describe('rule robustness matrix', () => {
     expectMatches('VG-CLOUD-006', 'aws_s3_bucket { bucket = "uploads" }');
     expectMatches('VG-CLOUD-007', 'ALLOW_BLOB_PUBLIC_ACCESS = TRUE');
   });
+  it('covers general configuration and hygiene aliases', () => {
+    expectMatches('VG-GEN-001', "address = '0.0.0.0'");
+    expectMatches('VG-GEN-002', 'debug: True');
+    expectMatches('VG-GEN-003', 'chmod 777 cache');
+    expectMatches('VG-GEN-004', '// password: retiredPassword');
+    expectMatches('VG-GEN-005', "db-host = 'prod.database.windows.net'");
+    expectMatches('VG-GEN-006', '// XXX encrypt stored profile data');
+    expectNoMatch('VG-GEN-006', '// TODO document the public API');
+  });
 });
