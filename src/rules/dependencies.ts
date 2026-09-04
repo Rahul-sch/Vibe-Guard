@@ -23,7 +23,7 @@ export const dependencyRules: DetectionRule[] = [
     category: 'dependency',
     languages: ['node', 'typescript'],
     filePatterns: ['*.js', '*.ts', '*.mjs', '*.cjs', 'package.json'],
-    pattern: /(?:require|import)\s*\(?['"](?:huggingface[-_]|@enterprise\/|react[-_]native[-_]toolkit)/g,
+    pattern: /(?:require|import)\s*\(?['"](?:huggingface[-_](?!hub\b)|@enterprise\/|react[-_]native[-_]toolkit)/g,
     message: 'Potentially hallucinated package name. Attacker may have registered malicious package.',
     remediation: 'Verify package exists on npm. Check package ownership and weekly downloads.',
     confidence: 'medium',

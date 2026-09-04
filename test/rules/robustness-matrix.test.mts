@@ -131,4 +131,12 @@ describe('rule robustness matrix', () => {
     expectMatches('VG-K8S-002', 'cidr: ::/0');
     expectNoMatch('VG-K8S-003', 'securityContext:\n  runAsNonRoot : true');
   });
+  it('covers configuration and dependency naming variants', () => {
+    expectMatches('VG-CFG-001', "server.listen(8080, '0.0.0.0')");
+    expectNoMatch('VG-CFG-001', "server.listen(8080, '::1')");
+    expectMatches('VG-CFG-002', 'ACL: public-read');
+    expectMatches('VG-DEP-001', 'from flask_admin_tools import panel');
+    expectMatches('VG-DEP-002', "import 'huggingface-utils'");
+    expectNoMatch('VG-DEP-002', "import 'huggingface_hub'");
+  });
 });
