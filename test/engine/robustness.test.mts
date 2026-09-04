@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { detectLanguages, filterRulesForFile } from '../../src/engine/filter.js';
 import { matchRule } from '../../src/engine/matcher.js';
+import { scan } from '../../src/engine/index.js';
 import { allRules } from '../../src/rules/index.js';
 import type { DetectionRule } from '../../src/rules/types.js';
 
@@ -57,5 +61,35 @@ describe('engine robustness', () => {
       confidence: 'high',
     };
     expect(matchRule('aa', zeroWidthRule)).toHaveLength(2);
+  });
+
+  it('applies rule ID and severity filters together during a real scan', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'vibeguard-filters-'));
+    try {
+      await writeFile(join(directory, 'app.js'), [
+        'const value = eval(payload);',
+        'DEBUG=true;',
+      ].join('\n'));
+
+      const critical = await scan({
+        targetPath: directory,
+        ruleIds: ['VG-SEC-001', 'VG-GEN-002'],
+        includeSeverities: ['critical'],
+      });
+      expect(critical.findings.map((finding) => finding.ruleId)).toEqual(['VG-SEC-001']);
+      expect(critical.criticalCount).toBe(1);
+      expect(critical.warningCount).toBe(0);
+
+      const warning = await scan({
+        targetPath: directory,
+        ruleIds: ['VG-SEC-001', 'VG-GEN-002'],
+        includeSeverities: ['warning'],
+      });
+      expect(warning.findings.map((finding) => finding.ruleId)).toEqual(['VG-GEN-002']);
+      expect(warning.criticalCount).toBe(0);
+      expect(warning.warningCount).toBe(1);
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
   });
 });
