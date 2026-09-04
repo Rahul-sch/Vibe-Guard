@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { detectLanguages, filterRulesForFile } from '../../src/engine/filter.js';
+import { matchRule } from '../../src/engine/matcher.js';
 import { allRules } from '../../src/rules/index.js';
+import type { DetectionRule } from '../../src/rules/types.js';
 
 describe('engine robustness', () => {
   it('detects languages for framework and compound filenames', () => {
@@ -34,5 +36,26 @@ describe('engine robustness', () => {
     const lowerPythonIds = filterRulesForFile('worker.py', allRules).map((rule) => rule.id);
     const upperPythonIds = filterRulesForFile('WORKER.PY', allRules).map((rule) => rule.id);
     expect(upperPythonIds).toEqual(lowerPythonIds);
+  });
+
+  it('isolates global regex state and advances zero-width matches', () => {
+    const evalRule = allRules.find((rule) => rule.id === 'VG-SEC-001')!;
+    const source = 'eval(first); eval(second);';
+    expect(matchRule(source, evalRule)).toHaveLength(2);
+    expect(matchRule(source, evalRule)).toHaveLength(2);
+    expect(evalRule.pattern.lastIndex).toBe(0);
+
+    const zeroWidthRule: DetectionRule = {
+      id: 'VG-TEST-001',
+      title: 'zero width',
+      severity: 'info',
+      category: 'general',
+      languages: ['node'],
+      filePatterns: ['*.js'],
+      pattern: /(?=a)/g,
+      message: 'test only',
+      confidence: 'high',
+    };
+    expect(matchRule('aa', zeroWidthRule)).toHaveLength(2);
   });
 });
