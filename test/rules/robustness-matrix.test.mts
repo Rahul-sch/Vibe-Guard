@@ -26,4 +26,10 @@ describe('rule robustness matrix', () => {
     expectNoMatch('VG-NODE-002', 'spawn(command, args, { shell: false })');
     expectNoMatch('VG-NODE-002', 'spawn(command, args)');
   });
+  it('covers every Node file-read sink and safe path construction', () => {
+    for (const sink of ['readFile', 'readFileSync', 'createReadStream', 'sendFile']) {
+      expectMatches('VG-NODE-006', `${sink}(req.body.path)`);
+      expectNoMatch('VG-NODE-006', `${sink}(validatedPath)`);
+    }
+  });
 });
