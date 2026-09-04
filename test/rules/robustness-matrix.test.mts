@@ -122,4 +122,13 @@ describe('rule robustness matrix', () => {
       expectNoMatch('VG-PY-018', `${sink}(approved_command)`);
     }
   });
+  it('covers Docker and Kubernetes equivalent syntax forms', () => {
+    expectMatches('VG-DOCK-002', '/var/run/docker.sock');
+    expectMatches('VG-DOCK-003', 'privileged : true');
+    expectMatches('VG-K8S-001', 'name: cluster-admin');
+    expectMatches('VG-K8S-001', 'name: clusteradmin');
+    expectMatches('VG-K8S-002', 'cidr: 0.0.0.0/0');
+    expectMatches('VG-K8S-002', 'cidr: ::/0');
+    expectNoMatch('VG-K8S-003', 'securityContext:\n  runAsNonRoot : true');
+  });
 });
