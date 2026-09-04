@@ -20,4 +20,10 @@ describe('rule robustness matrix', () => {
     expectMatches('VG-NODE-001', 'execSync(command)');
     expectNoMatch('VG-NODE-001', 'execFile("convert", [filename])');
   });
+  it('covers spawn shell option placement and safe settings', () => {
+    expectMatches('VG-NODE-002', "spawn(command, args, { cwd: '/tmp', shell: true })");
+    expectMatches('VG-NODE-002', 'spawn(command, [], { shell:true, timeout: 1000 })');
+    expectNoMatch('VG-NODE-002', 'spawn(command, args, { shell: false })');
+    expectNoMatch('VG-NODE-002', 'spawn(command, args)');
+  });
 });
