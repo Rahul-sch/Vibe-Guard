@@ -97,4 +97,16 @@ describe('rule robustness matrix', () => {
       expectNoMatch('VG-PY-011', `${sink}(trusted_code)`);
     }
   });
+  it('covers Python redirects, archive extraction, and deletion families', () => {
+    for (const sink of ['redirect', 'HttpResponseRedirect', 'HttpResponsePermanentRedirect']) {
+      expectMatches('VG-PY-012', `${sink}(request.GET.get("next"))`);
+      expectNoMatch('VG-PY-012', `${sink}(safe_next)`);
+    }
+    expectMatches('VG-PY-013', 'archive.extractall(request.form.get("target"))');
+    expectNoMatch('VG-PY-013', 'archive.extractall(SAFE_TARGET)');
+    for (const sink of ['remove', 'unlink', 'rmdir', 'os.remove', 'os.unlink', 'os.rmdir', 'shutil.rmtree']) {
+      expectMatches('VG-PY-014', `${sink}(request.POST.get("path"))`);
+      expectNoMatch('VG-PY-014', `${sink}(validated_path)`);
+    }
+  });
 });
