@@ -109,4 +109,17 @@ describe('rule robustness matrix', () => {
       expectNoMatch('VG-PY-014', `${sink}(validated_path)`);
     }
   });
+  it('covers Python headers, imports, regexes, and process helpers', () => {
+    expectMatches('VG-PY-015', 'response["X-Value"] = request.headers.get("X-Value")');
+    expectMatches('VG-PY-015', 'response.headers["X-Value"] = request.form["value"]');
+    for (const sink of ['importlib.import_module', '__import__']) {
+      expectMatches('VG-PY-016', `${sink}(request.args.get("module"))`);
+      expectNoMatch('VG-PY-016', `${sink}(approved_module)`);
+    }
+    expectMatches('VG-PY-017', 're.compile(request.GET["pattern"])');
+    for (const sink of ['subprocess.run', 'subprocess.call', 'subprocess.check_call', 'subprocess.check_output', 'subprocess.Popen']) {
+      expectMatches('VG-PY-018', `${sink}(request.form.get("command"))`);
+      expectNoMatch('VG-PY-018', `${sink}(approved_command)`);
+    }
+  });
 });
