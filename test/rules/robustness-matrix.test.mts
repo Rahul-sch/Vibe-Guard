@@ -14,4 +14,10 @@ describe('rule robustness matrix', () => {
     expectMatches('VG-SEC-012', `ghu_${'A_'.repeat(18)}`);
     expectNoMatch('VG-SEC-012', `ghs_${'A'.repeat(36)}`);
   });
+  it('covers Node exec templates, concatenation, and safe executable APIs', () => {
+    expectMatches('VG-NODE-001', 'exec(`convert ${filename}`)');
+    expectMatches('VG-NODE-001', 'exec("convert " + filename)');
+    expectMatches('VG-NODE-001', 'execSync(command)');
+    expectNoMatch('VG-NODE-001', 'execFile("convert", [filename])');
+  });
 });
