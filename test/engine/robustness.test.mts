@@ -25,4 +25,14 @@ describe('engine robustness', () => {
     const unknownIds = filterRulesForFile('README.md', allRules).map((rule) => rule.id);
     expect(unknownIds).toEqual([]);
   });
+
+  it('treats source-file extensions case-insensitively', () => {
+    const lowerIds = filterRulesForFile('handler.js', allRules).map((rule) => rule.id);
+    const upperIds = filterRulesForFile('HANDLER.JS', allRules).map((rule) => rule.id);
+    expect(upperIds).toEqual(lowerIds);
+
+    const lowerPythonIds = filterRulesForFile('worker.py', allRules).map((rule) => rule.id);
+    const upperPythonIds = filterRulesForFile('WORKER.PY', allRules).map((rule) => rule.id);
+    expect(upperPythonIds).toEqual(lowerPythonIds);
+  });
 });

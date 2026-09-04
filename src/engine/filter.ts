@@ -60,22 +60,24 @@ export function filterRulesForFile(
 }
 
 function matchesPattern(basename: string, pattern: string): boolean {
+  const normalizedBasename = basename.toLowerCase();
+
   // Strip globstar prefix: a leading "**" followed by "/" is equivalent to no prefix
   // when matching against a basename.
-  let p = pattern;
+  let p = pattern.toLowerCase();
   if (p.startsWith('**' + '/')) p = p.slice(3);
 
   if (p === '*' || p === '**') return true;
 
   if (p.startsWith('*.') && p.indexOf('*', 2) === -1) {
-    return basename.endsWith(p.slice(1));
+    return normalizedBasename.endsWith(p.slice(1));
   }
 
   // Trailing wildcard, e.g. `*.env*`
   if (p.startsWith('*.') && p.endsWith('*')) {
     const stem = p.slice(1, -1); // ".env"
-    return basename.includes(stem);
+    return normalizedBasename.includes(stem);
   }
 
-  return basename === p || basename.toLowerCase() === p.toLowerCase();
+  return normalizedBasename === p;
 }
