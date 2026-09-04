@@ -149,4 +149,16 @@ describe('rule robustness matrix', () => {
     expectMatches('VG-CRYPTO-007', 'keySize: 512');
     expectNoMatch('VG-CRYPTO-007', 'keySize: 256');
   });
+  it('covers web response methods and protected alternatives', () => {
+    expectMatches('VG-WEB-001', "origin: '*' ");
+    expectNoMatch('VG-WEB-002', "setCookie('sid', value, { secure: true, httpOnly: true })");
+    expectMatches('VG-WEB-004', '`${req.params.name}`');
+    expectMatches('VG-WEB-005', 'node.innerHTML = props.content');
+    expectNoMatch('VG-WEB-006', "app.delete('/item', xsrfGuard, removeItem)");
+    expectNoMatch('VG-WEB-007', 'express(); helmet()');
+    for (const method of ['send', 'write', 'end']) {
+      expectMatches('VG-WEB-008', `res.${method}(req.body.message)`);
+      expectNoMatch('VG-WEB-008', `res.${method}(escapedMessage)`);
+    }
+  });
 });
